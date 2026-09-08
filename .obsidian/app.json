@@ -2,7 +2,10 @@
   "defaultViewMode": "preview",
   "foldHeading": false,
   "spellcheck": false,
-  "spellcheckLanguages": ["th", "en"],
+  "spellcheckLanguages": [
+    "th",
+    "en"
+  ],
   "newFileLocation": "current",
   "attachmentFolderPath": "raw/assets",
   "useMarkdownLinks": false,
