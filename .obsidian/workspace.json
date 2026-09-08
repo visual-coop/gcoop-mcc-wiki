@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "raw/documents/core-loancollservice-cs.md",
+                "file": "SCHEMA.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "core-loancollservice-cs"
+              "title": "SCHEMA"
             }
           }
         ]
@@ -191,11 +191,12 @@
   },
   "active": "1c209f32c98a1a78",
   "lastOpenFiles": [
+    "log.md",
+    "index.md",
+    "raw/documents/core-loancollservice-cs.md",
     "entities/gcoop-core.md",
     "entities/gcoop-loan-system.md",
-    "entities/gcoop-mhd.md",
     "concepts/gcoop-loan-collateral.md",
-    "log.md",
-    "raw/documents/core-loancollservice-cs.md"
+    "entities/gcoop-mhd.md"
   ]
 }
