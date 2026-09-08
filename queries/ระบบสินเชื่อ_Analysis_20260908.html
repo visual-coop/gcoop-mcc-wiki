@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>ระบบสินเชื่อ Analysis 2026-09-08</title>
+<style>
+body{font-family:Sarabun,sans-serif;max-width:1200px;margin:auto;padding:20px;line-height:1.6}
+h1{color:#1a237e}h2{color:#283593;border-bottom:2px solid #3949ab;padding-bottom:4px}
+h3{color:#3949ab}table{width:100%;margin:10px 0}
+th{background:#3949ab;color:white}td,th{padding:6px;border:1px solid #ccc}
+tr:nth-child(even){background:#f5f5f5}code{background:#f0f0f0;padding:2px 4px;border-radius:3px}
+pre{background:#1e1e1e;color:#d4d4d4;padding:15px;border-radius:5px;overflow-x:auto}
+</style>
+</head>
+<body>
+<h1>ระบบสินเชื่อ — วิเคราะห์ End-to-End Analysis</h1>
+
+<strong>วันที่วิเคราะห์:</strong> 2026-09-08
+<strong>Path UI:</strong> <code>/mhd/GCOOP/Saving/Applications/loan/</code>
+<strong>PBProcess Extend:</strong> <code>/mhd/GCOOP/PBProcess/</code>
+<strong>PBProcess Core:</strong> <code>/CORE/GCOOP/PBProcess/</code>
+<strong>PBService:</strong> <code>/CORE/GCOOP/PBService125/</code>
+<strong>Output:</strong> <code>/CORE/.output/</code>
+
+<p>---</p>
+
+<h2>1. ภาพรวมและขอบเขตของระบบ</h2>
+
+<p>ระบบสินเชื่อ (Loan System) ของ GCOOP MHD ครอบคลุมกระบวนการตั้งแต่ยื่นคำขอกู้จนถึงปิดบัญชี ประกอบด้วย <strong>33 หน้าจอหลัก</strong> (ws_*) และ <strong>13 child_dialog</strong> (wd_*)</p>
+
+<h3>รูปแบบสถาปัตยกรรมที่พบ</h3>
+
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>Pattern</th><th>จำนวนหน้าจอ</th><th>สัดส่วน</th></tr>
+<tr><td><strong>WCF-heavy</strong> (wcf.NLoan.* + wcf.NCommon.*)</td><td>14</td><td>42%</td></tr>
+<tr><td><strong>runProcessingExtend</strong> (MHD PBProcess)</td><td>5</td><td>15%</td></tr>
+<tr><td><strong>runProcessing</strong> (Core PBProcess)</td><td>5</td><td>15%</td></tr>
+<tr><td><strong>Direct SQL</strong> (WebUtil.QuerySdt / ExecuteDataSource)</td><td>6</td><td>18%</td></tr>
+<tr><td><strong>Mixed</strong> (WCF + Direct SQL หรือ WCF + runProcessing)</td><td>3</td><td>9%</td></tr>
+</table>
+
+<strong>ข้อสังเกตสำคัญ:</strong> Pattern ไม่สม่ำเสมอ — หน้าจอในกลุ่มเดียวกันบางตัวใช้ WCF บางตัวใช้ Direct SQL โดยไม่มีเหตุผลชัดเจน
+
+<p>---</p>
+
+<h2>2. ดัชนีหน้าจอทั้งหมด</h2>
+
+<h3>กลุ่ม A: คำร้องขอกู้</h3>
+
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>ลำดับ</th><th>ชื่อหน้าจอ</th><th>วัตถุประสงค์</th><th>child_dialog</th><th>PB Process/Service</th><th>ตารางหลัก</th><th>Confidence</th><th>Needs Review</th></tr>
+<tr><td>1</td><td>ws_lon_reqloan</td><td>ยื่นคำขอกู้ปกติ</td><td>wd_lon_rightcoll (dlg/), wd_lon_mthoth_minus, wd_lon_mthoth_plus, wd_lon_openloanreq</td><td>wcf.NLoan.of_calperiodpay, of_isvalidcoll, of_isvalidcoll2, of_getcollpermiss, of_getcollusecontamt, of_getcollusereqamt, of_getgrplonpermiss, of_computeinterest, of_computeinterest2, of_checkcollmancount; wcf.NCommon.of_getnewdocno, of_getpostingdate, of_getpostingdate2, of_isworkingdate; wcf.Shrlon.of_roundmoney</td><td>lnreqloan, lnreqloancoll, lnreqloanclr, lnreqloanclrother, lnloantype, lnloanconstant, lnloantypeperiod, lnloantypecustom, mbmembmaster</td><td>High</td><td>true</td></tr>
+<tr><td>2</td><td>ws_lon_reqloanext</td><td>ยื่นคำขอกู้พิเศษ (External)</td><td>-</td><td>wcf.NLoan.of_calperiodpay, of_calinstallment, of_isvalidcoll, of_getcollpermiss, of_getcollusecontamt, of_getcollusereqamt, of_getgrplonpermiss, of_computeinterest, of_computeinterest2, of_checkcollmancount; wcf.NCommon.of_getnewdocno, of_getpostingdate</td><td>lnreqloan, lnreqloancoll, lnreqloanclr, lnreqloanclrother, lnloantype, lnloantypeperiod, lnloantypecustom</td><td>High</td><td>false</td></tr>
+<tr><td>3</td><td>ws_lon_reqloan_adjust_onlne</td><td>ปรับปรุงคำขอกู้ Online</td><td>-</td><td>wcf.NLoan.of_calperiodpay, of_computeinterest, of_getgrplonpermiss; wcf.NCommon.of_getnewdocno, of_getpostingdate, of_getpostingdate2, of_isworkingdate; wcf.Shrlon.of_roundmoney</td><td>lnreqloancolladjust, lnreqloanclrotheradjust, lnreqloanclr, lnloantype, lnloantypeperiod, lnloantypecustom</td><td>High</td><td>false</td></tr>
+<tr><td>4</td><td>ws_lon_promise</td><td>ทำสัญญา/แก้ไขสัญญา</td><td>-</td><td>wcf.NLoan.of_getcollpermiss, of_getcollusecontamt, of_getcollusereqamt, of_checkcollmancount</td><td>lncontmaster, lncontcoll, lnloantype, lnucfadjustcause</td><td>High</td><td>true</td></tr>
+</table>
+
+<h3>กลุ่ม B: อนุมัติ</h3>
+
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>ลำดับ</th><th>ชื่อหน้าจอ</th><th>วัตถุประสงค์</th><th>child_dialog</th><th>PB Process/Service</th><th>ตารางหลัก</th><th>Confidence</th><th>Needs Review</th></tr>
+<tr><td>5</td><td>ws_lon_apvloan</td><td>อนุมัติคำขอกู้</td><td>-</td><td>wcf.NLoan.of_saveapv_lnreq, of_gennewcontractno, of_computeinterest; wcf.NCommon.of_gennewdocnocustom</td><td>lnreqloan, lncontmaster</td><td>Medium</td><td>true</td></tr>
+<tr><td>6</td><td>ws_lon_approve_loan</td><td>อนุมัติคำขอกู้ (batch)</td><td>-</td><td>wcf.NLoan.of_saveapv_lnreq, of_gennewcontractno</td><td>lnreqloan</td><td>Medium</td><td>true</td></tr>
+<tr><td>7</td><td>ws_lon_cfloantype</td><td>ตั้งค่าประเภทเงินกู้</td><td>-</td><td>- (Direct SQL)</td><td>lnloantype, lnloantypecolluse, lnloantyperightcoll, lnloantypecustom, lncfgrplnperm, lncfloanintrate, lncfintpromotion, lncfsalarybalance, lnucfloanobjective</td><td>High</td><td>false</td></tr>
+</table>
+
+<h3>กลุ่ม C: เบิกจ่าย/รับเงิน</h3>
+
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>ลำดับ</th><th>ชื่อหน้าจอ</th><th>วัตถุประสงค์</th><th>child_dialog</th><th>PB Process/Service</th><th>ตารางหลัก</th><th>Confidence</th><th>Needs Review</th></tr>
+<tr><td>8</td><td>ws_lon_rcvloan</td><td>บันทึกรับเงินกู้</td><td>wd_lon_rcvdetail_ctrl, wd_lon_rcvlon_ctrl, w_dlg_loan_search_receive_ctrl</td><td>CoreSavingLibrary.WcfNLoan; iReportBuider</td><td>lncontmaster, lnreqloan, lnloanconstant</td><td>Medium</td><td>true</td></tr>
+<tr><td>9</td><td>ws_lon_post_loan_receive</td><td>Post รายการรับเงิน (บัญชี)</td><td>-</td><td>wcf.NLoan.of_saveslip_postlnrcv</td><td>lnpostlist_lnrcv (d_lcsrv_postlist_lnrcv.srd), lnloanconstant</td><td>Medium</td><td>true</td></tr>
+<tr><td>10</td><td>ws_lon_post_loan_pxpmp</td><td>Post รับเงินกู้ PX/PMP</td><td>-</td><td>- (Direct SQL)</td><td>sltranspayin</td><td>High</td><td>true</td></tr>
+<tr><td>11</td><td>ws_lon_paintloan</td><td>พิมพ์เอกสารเงินกู้</td><td>-</td><td>WebUtil.runProcessingReport(gid=LOAN_DAILY, rid=LNDY0001)</td><td>lncontmaster, lnreqloan</td><td>Medium</td><td>false</td></tr>
+</table>
+
+<h3>กลุ่ม D: ชำระคืน</h3>
+
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>ลำดับ</th><th>ชื่อหน้าจอ</th><th>วัตถุประสงค์</th><th>child_dialog</th><th>PB Process/Service</th><th>ตารางหลัก</th><th>Confidence</th><th>Needs Review</th></tr>
+<tr><td>12</td><td>ws_lon_payment</td><td>บันทึกชำระเงินกู้</td><td>-</td><td>wcf.NLoan.of_initslippayin, of_initslippayin_recalint, of_saveslip_payin, of_calfeeloanpayment; wcf.NCommon.of_getnewdocno, of_getnextworkday; wcf.NDeposit.of_withdraw_deposit_trans, of_withdraw_loan; WebUtil.runProcessingFin</td><td>lncontmaster, lncffeedet, lncffee, lnloanconstant, slslippayindet</td><td>Medium</td><td>false</td></tr>
+<tr><td>13</td><td>ws_lon_cclpayin</td><td>ยกเลิกใบเสร็จชำระ</td><td>-</td><td>wcf.NLoan.of_saveccl_payin (commented out!)</td><td>slslippayindet, slucfslipitemtype</td><td>Medium</td><td>true</td></tr>
+<tr><td>14</td><td>ws_lon_cclpayin_apv</td><td>อนุมัติยกเลิกใบเสร็จ</td><td>-</td><td>wcf.NLoan.of_saveccl_payin</td><td>slslippayindet</td><td>Medium</td><td>false</td></tr>
+<tr><td>15</td><td>ws_lon_cclloanrcv_apv</td><td>อนุมัติยกเลิกรับเงินกู้</td><td>-</td><td>wcf.NLoan.of_saveccl_lnrcv</td><td>-</td><td>Medium</td><td>false</td></tr>
+<tr><td>16</td><td>ws_lon_prctrnpayin</td><td>Process โอน transaction ชำระ</td><td>-</td><td>runProcessing("LNPOSTTRNPAYIN") → n_cst_proc_sltrnpayin.of_proc_trnpayin (pcloan.pbl)</td><td>lnstm, lncont, lnpayin</td><td>Medium</td><td>false</td></tr>
+<tr><td>17</td><td>ws_lon_prc_preparepay</td><td>เตรียมข้อมูลชำระ</td><td>-</td><td>runProcessing("LNPAYPREPARE") → n_cst_proc_lnprepare.of_proc_lnprepare (pcloan.pbl)</td><td>-</td><td>Medium</td><td>false</td></tr>
+</table>
+
+<h3>กลุ่ม E: ค้ำประกัน/หลักทรัพย์</h3>
+
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>ลำดับ</th><th>ชื่อหน้าจอ</th><th>วัตถุประสงค์</th><th>child_dialog</th><th>PB Process/Service</th><th>ตารางหลัก</th><th>Confidence</th><th>Needs Review</th></tr>
+<tr><td>18</td><td>ws_lon_collateral_master</td><td>บันทึกหลักทรัพย์ค้ำประกัน</td><td>-</td><td>wcf.NCommon.of_getnewdocno</td><td>lncollmaster, lncolldetail, lncollmastprop, lncollmastbuilding, lncollmastmemco, lnucfcollmasttypegrp, lnucflandtype, lnucfbuildingtype, lnucfbuildingarea</td><td>High</td><td>false</td></tr>
+<tr><td>19</td><td>ws_lon_collateral_mastdet</td><td>ดูรายละเอียดหลักทรัพย์</td><td>-</td><td>wcf.NCommon.of_getnewdocno</td><td>lncollmaster, lncollmastprop, lncollmastbuilding, lncollmastmemco</td><td>High</td><td>false</td></tr>
+<tr><td>20</td><td>ws_lon_collateral_car</td><td>บันทึกหลักทรัพย์รถยนต์</td><td>-</td><td>wcf.NCommon.of_getnewdocno</td><td>lncollcarmaster</td><td>High</td><td>false</td></tr>
+<tr><td>21</td><td>ws_lon_collredeem</td><td>ขอไถ่ถอนหลักทรัพย์</td><td>-</td><td>- (Direct SQL)</td><td>lncontcoll, lncollmaster, lncolldetail, lncollmastbuilding, lnucfcollredeemcause, lnreqcollmastredeem</td><td>High</td><td>true</td></tr>
+<tr><td>22</td><td>ws_lon_trnsloancoll</td><td>โอนสัญญาค้ำประกัน</td><td>-</td><td>wcf.NLoan.of_savetrn_lntrnres (//pb125)</td><td>lncontmaster, lncontcoll, lnloantype</td><td>Medium</td><td>true</td></tr>
+</table>
+
+<h3>กลุ่ม F: กระบวนการ/อื่นๆ</h3>
+
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>ลำดับ</th><th>ชื่อหน้าจอ</th><th>วัตถุประสงค์</th><th>child_dialog</th><th>PB Process/Service</th><th>ตารางหลัก</th><th>Confidence</th><th>Needs Review</th></tr>
+<tr><td>23</td><td>ws_lon_proc_moneyreturn</td><td>Process คืนเงินดอกเบี้ย</td><td>-</td><td>runProcessingExtend("PROCSETINTRETURNMHD") → of_proc_setmnyreturn_mhd (mhd/pcloan.pbl)</td><td>-</td><td>Medium</td><td>false</td></tr>
+<tr><td>24</td><td>ws_lon_proc_paymoneyreturn</td><td>Post ใบสำคัญจ่ายคืนดอกเบี้ย</td><td>-</td><td>runProcessingExtend("POSTINTRETPAYOUT_POSTSTM_SUMPAY") → of_post_toslippayout_sumpay (pcloan.pbl)</td><td>-</td><td>Medium</td><td>true</td></tr>
+<tr><td>25</td><td>ws_lon_post_paymoneyreturn</td><td>Post รายการคืนดอกเบี้ย</td><td>-</td><td>runProcessingExtend("POSTINTRETPAYOUT_POSTSTM") → of_post_toslippayout (pcloan.pbl)</td><td>-</td><td>Medium</td><td>false</td></tr>
+<tr><td>26</td><td>ws_lon_prcshrlonbal</td><td>Process ปรับยอดหุ้น-เงินกู้</td><td>-</td><td>runProcessingExtend("SHRLONBAL") → n_cst_proc_slshrlonbal.of_proc_shrlonbal (pcloan.pbl)</td><td>-</td><td>Medium</td><td>false</td></tr>
+<tr><td>27</td><td>ws_lon_cls_process_setmb_npl</td><td>กำหนดสมาชิก NPL</td><td>-</td><td>runProcessing("PROCSETARRMTHNPL") → n_cst_sl_mth_arrear_process.of_procnpl (mhd/pcloan.pbl); wcf.NCommon.of_lastdayofmonth</td><td>-</td><td>Medium</td><td>true</td></tr>
+<tr><td>28</td><td>ws_lon_caltobank</td><td>เครื่องคำนวณเงินกู้</td><td>-</td><td>LoanMasterClass.CalPeriodPayment() (C# helper, ไม่ write DB)</td><td>-</td><td>High</td><td>false</td></tr>
+<tr><td>29</td><td>ws_lon_reprnmortgage</td><td>พิมพ์เอกสารจำนอง</td><td>-</td><td>iReportBuider → webreportdetail</td><td>webreportdetail</td><td>High</td><td>false</td></tr>
+<tr><td>30</td><td>ws_lon_reprntpayout</td><td>พิมพ์ใบสำคัญจ่าย</td><td>-</td><td>iReportBuider</td><td>-</td><td>High</td><td>false</td></tr>
+<tr><td>31</td><td>ws_lon_docscan_datatransfer</td><td>โอนข้อมูล Document Scan</td><td>-</td><td>- (ไม่พบ call ใดๆ ใน .cs 114 บรรทัด)</td><td>-</td><td>Low</td><td>true</td></tr>
+<tr><td>32</td><td>ws_lon_certificateinterest</td><td>หนังสือรับรองดอกเบี้ย</td><td>-</td><td>runProcessingCappExtend("runPostProcess"); Direct SQL</td><td>lnsumintcert, lncontstatement</td><td>High</td><td>true</td></tr>
+<tr><td>33</td><td>ws_imp_post_ctrl</td><td>Import + Post transaction</td><td>-</td><td>runProcessing("LNPOSTTRNPAYIN") → n_cst_proc_sltrnpayin (pcloan.pbl)</td><td>-</td><td>Medium</td><td>false</td></tr>
+</table>
+
+<p>---</p>
+
+<h2>3. แผนภาพการทำงาน</h2>
+
+<p>> <strong>หมายเหตุ:</strong> ตรวจสอบโค้ดทุกหน้าจอแล้ว <strong>ไม่พบ screen-to-screen link</strong> (Response.Redirect / Server.Transfer ระหว่าง ws_*) — ทุกหน้าจอเป็น standalone entry point จากเมนู แผนภาพด้านล่างแสดง <strong>data-flow</strong> (หน้าจอกลุ่มใดเขียน/อ่านตารางใด) แทน</p>
+
+<pre><code class="mermaid">flowchart TD
+<p>    subgraph A["A: คำร้องขอกู้"]</p>
+<p>        A1[ws_lon_reqloan]</p>
+<p>        A2[ws_lon_reqloanext]</p>
+<p>        A3[ws_lon_reqloan_adjust_onlne]</p>
+<p>        A4[ws_lon_promise]</p>
+<p>    end</p>
+
+<p>    subgraph B["B: อนุมัติ"]</p>
+<p>        B1[ws_lon_apvloan]</p>
+<p>        B2[ws_lon_approve_loan]</p>
+<p>        B3[ws_lon_cfloantype]</p>
+<p>    end</p>
+
+<p>    subgraph C["C: เบิกจ่าย/รับเงิน"]</p>
+<p>        C1[ws_lon_rcvloan]</p>
+<p>        C2[ws_lon_post_loan_receive]</p>
+<p>        C3[ws_lon_post_loan_pxpmp]</p>
+<p>        C4[ws_lon_paintloan]</p>
+<p>    end</p>
+
+<p>    subgraph D["D: ชำระคืน"]</p>
+<p>        D1[ws_lon_payment]</p>
+<p>        D2[ws_lon_cclpayin]</p>
+<p>        D3[ws_lon_cclpayin_apv]</p>
+<p>        D4[ws_lon_cclloanrcv_apv]</p>
+<p>        D5[ws_lon_prctrnpayin]</p>
+<p>        D6[ws_lon_prc_preparepay]</p>
+<p>    end</p>
+
+<p>    subgraph E["E: ค้ำประกัน"]</p>
+<p>        E1[ws_lon_collateral_master]</p>
+<p>        E2[ws_lon_collateral_mastdet]</p>
+<p>        E3[ws_lon_collateral_car]</p>
+<p>        E4[ws_lon_collredeem]</p>
+<p>        E5[ws_lon_trnsloancoll]</p>
+<p>    end</p>
+
+<p>    subgraph F["F: กระบวนการ"]</p>
+<p>        F1[ws_lon_proc_moneyreturn]</p>
+<p>        F2[ws_lon_proc_paymoneyreturn]</p>
+<p>        F3[ws_lon_prcshrlonbal]</p>
+<p>        F4[ws_lon_cls_process_setmb_npl]</p>
+<p>        F5[ws_lon_certificateinterest]</p>
+<p>    end</p>
+
+<p>    T1[(lnreqloan)]</p>
+<p>    T2[(lncontmaster)]</p>
+<p>    T3[(lncontcoll)]</p>
+<p>    T4[(sltranspayin / slslippayindet)]</p>
+<p>    T5[(lncollmaster)]</p>
+<p>    T6[(lnsumintcert)]</p>
+
+<p>    A1 & A2 & A3 --&gt;<table border="1" cellpadding="6" style="border-collapse:collapse"></p>
+<tr><th>write</th><th>T1</th></tr>
+</table>
+<p>    A4 --&gt;<table border="1" cellpadding="6" style="border-collapse:collapse"></p>
+<tr><th>read lncontmaster / write lncontcoll</th><th>T2</th></tr>
+</table>
+<p>    B1 & B2 --&gt;<table border="1" cellpadding="6" style="border-collapse:collapse"></p>
+<tr><th>read lnreqloan / write lncontmaster</th><th>T1</th></tr>
+</table>
+<p>    B1 & B2 --&gt;<table border="1" cellpadding="6" style="border-collapse:collapse"></p>
+<tr><th>write</th><th>T2</th></tr>
+</table>
+<p>    C1 --&gt;<table border="1" cellpadding="6" style="border-collapse:collapse"></p>
+<tr><th>read</th><th>T2</th></tr>
+</table>
+<p>    C2 & C3 --&gt;<table border="1" cellpadding="6" style="border-collapse:collapse"></p>
+<tr><th>write</th><th>T4</th></tr>
+</table>
+<p>    D1 & D3 --&gt;<table border="1" cellpadding="6" style="border-collapse:collapse"></p>
+<tr><th>write slslippayindet</th><th>T4</th></tr>
+</table>
+<p>    D5 --&gt;<table border="1" cellpadding="6" style="border-collapse:collapse"></p>
+<tr><th>write lnstm/lncont</th><th>T2</th></tr>
+</table>
+<p>    E1 & E2 & E3 --&gt;<table border="1" cellpadding="6" style="border-collapse:collapse"></p>
+<tr><th>write</th><th>T5</th></tr>
+</table>
+<p>    E4 & E5 --&gt;<table border="1" cellpadding="6" style="border-collapse:collapse"></p>
+<tr><th>read/write lncontcoll</th><th>T3</th></tr>
+</table>
+<p>    F5 --&gt;<table border="1" cellpadding="6" style="border-collapse:collapse"></p>
+<tr><th>write</th><th>T6</code></pre></th></tr>
+</table>
+
+<p>---</p>
+
+<h2>4. กระบวนการทำงานหลักของระบบ</h2>
+
+<p>ระบบสินเชื่อทำงานตาม <strong>6 กลุ่มหลัก</strong> ต่อเนื่องกันผ่าน data (ไม่ใช่ screen navigation):</p>
+
+<pre><code class="">[A] ยื่นคำร้อง → lnreqloan (WCF-heavy: NLoan, NCommon)
+<p>        ↓</p>
+<p>[B] อนุมัติ → lncontmaster เกิดขึ้น (wcf.NLoan.of_saveapv_lnreq)</p>
+<p>        ↓</p>
+<p>[E] ค้ำประกัน → lncollmaster, lncontcoll (Direct SQL + wcf.NCommon)</p>
+<p>        ↓</p>
+<p>[C] เบิกจ่าย → sltranspayin, slslippayout (WCF + Direct SQL)</p>
+<p>        ↓</p>
+<p>[D] ชำระคืน → slslippayindet, lnstm (WCF + runProcessing)</p>
+<p>        ↓</p>
+<p>[F] กระบวนการปิด → lnsumintcert (runProcessingExtend + Direct SQL)</code></pre></p>
+
+<strong>จุดพิเศษที่พบ:</strong>
+<p>- <code>ws_lon_caltobank</code> ไม่ write DB เลย — เป็นแค่ calculator ฝั่ง UI</p>
+<p>- <code>ws_lon_cls_process_setmb_npl</code> มี <code>LNCLOSEMONTH</code> commented out — ใช้แค่ <code>PROCSETARRMTHNPL</code> จริง</p>
+<p>- MHD มี <code>PROCSETINTRETURNMHD</code> เป็น extend process เฉพาะ ไม่มีใน core</p>
+
+<strong>สัดส่วนสถาปัตยกรรม:</strong>
+<p>WCF 42% > Direct SQL 18% > runProcessingExtend 15% = runProcessing 15% > Mixed 9%</p>
+
+<p>---</p>
+
+<h2>5. ตารางข้อมูลที่ใช้</h2>
+
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>ชื่อตาราง</th><th>ใช้ในหน้าจอ</th></tr>
+<tr><td><strong>lnreqloan</strong></td><td>ws_lon_reqloan, ws_lon_reqloanext, ws_lon_reqloan_adjust_onlne, ws_lon_apvloan, ws_lon_approve_loan, ws_lon_rcvloan</td></tr>
+<tr><td><strong>lncontmaster</strong></td><td>ws_lon_promise, ws_lon_apvloan, ws_lon_approve_loan, ws_lon_rcvloan, ws_lon_trnsloancoll, ws_lon_paintloan, ws_lon_prctrnpayin</td></tr>
+<tr><td><strong>lncontcoll</strong></td><td>ws_lon_promise, ws_lon_collredeem, ws_lon_trnsloancoll</td></tr>
+<tr><td><strong>lnloantype + ตารางลูก ~13 ตาราง</strong></td><td>ws_lon_reqloan, ws_lon_reqloanext, ws_lon_reqloan_adjust_onlne, ws_lon_cfloantype, ws_lon_promise, ws_lon_trnsloancoll</td></tr>
+<tr><td><strong>lncollmaster / lncolldetail / lncollmastprop / lncollmastbuilding</strong></td><td>ws_lon_collateral_master, ws_lon_collateral_mastdet, ws_lon_collredeem</td></tr>
+<tr><td><strong>lncollcarmaster</strong></td><td>ws_lon_collateral_car</td></tr>
+<tr><td><strong>lnreqcollmastredeem</strong></td><td>ws_lon_collredeem</td></tr>
+<tr><td><strong>sltranspayin</strong></td><td>ws_lon_post_loan_pxpmp</td></tr>
+<tr><td><strong>slslippayindet / slslippayin</strong></td><td>ws_lon_cclpayin, ws_lon_cclpayin_apv, ws_lon_payment</td></tr>
+<tr><td><strong>lnsumintcert / lncontstatement</strong></td><td>ws_lon_certificateinterest</td></tr>
+<tr><td><strong>mbmembmaster</strong></td><td>ws_lon_reqloan (ผ่าน wcf.NLoan.of_isvalidcoll)</td></tr>
+<tr><td><strong>webreportdetail</strong></td><td>ws_lon_reprnmortgage</td></tr>
+<tr><td><strong>lnloanconstant</strong></td><td>ws_lon_payment, ws_lon_rcvloan, ws_lon_post_loan_receive</td></tr>
+</table>
+
+<p>---</p>
+
+<h2>6. จุดที่ต้องให้ Business User ยืนยัน</h2>
+
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>หน้าจอต้นทาง</th><th>ประเด็นที่ต้องยืนยัน</th></tr>
+<tr><td>ws_lon_reqloan</td><td>Hardcode "อายุสมาชิกผู้ค้ำต้องมีอายุไม่น้อยกว่า 72 เดือน (6 ปี)" — ตัวเลขนี้ hardcode หรือดึงจาก config?</td></tr>
+<tr><td>ws_lon_reqloan</td><td>Hardcode เงื่อนไข "เงินกู้ประเภทสามัญอาวุโส ยอดขอกู้ ต้องหลักพัน หรือ 500" — มาจาก lnloantype config หรือ hardcode?</td></tr>
+<tr><td>ws_lon_reqloan</td><td>exe.AddFormView (Insert/Update) — มี transaction ครอบหรือไม่? ถ้า insert lnreqloan สำเร็จแต่ insert lnreqloancoll ล้มเหลว จะ rollback ได้ไหม?</td></tr>
+<tr><td>ws_lon_reqloan</td><td>OpenIFrame2 (commented out) ใช้ OpenIFrame2Extend แทน — ยืนยัน wd_lon_rightcoll.aspx อยู่ที่ path จริงใด (ไม่พบใน dlg/)</td></tr>
+<tr><td>ws_lon_promise</td><td>DELETE lncontcoll ก่อน INSERT ใหม่ (line 769-776) ไม่มี transaction ครอบชัดเจน — risk data integrity</td></tr>
+<tr><td>ws_lon_apvloan / ws_lon_approve_loan</td><td>wcf.NLoan.of_saveapv_lnreq — ไม่พบ implementation ใน core/lncoopsrv.pbl อยู่ที่ไหน?</td></tr>
+<tr><td>ws_lon_rcvloan</td><td>Report hardcode "ir_receipt_a4_lon2p_mhd_new" — ใช้ template เดียวทุกกรณีหรือไม่?</td></tr>
+<tr><td>ws_lon_post_loan_pxpmp</td><td>INSERT INTO sltranspayin ต่อ loop แต่ละ row ด้วย exe.Execute() ครั้งเดียว — ถ้า row N ล้มเหลว rows ก่อนหน้า rollback ไหม?</td></tr>
+<tr><td>ws_lon_post_loan_pxpmp</td><td>Hardcode sliptype_code='PX', trnsource_code='DFP', trnsource_status=8, moneytype_code='TRD' — ค่าเหล่านี้มีนัยสำคัญทางบัญชีอย่างไร?</td></tr>
+<tr><td>ws_lon_cclpayin</td><td>wcf.NLoan.of_saveccl_payin ถูก comment out (line 110) — การยกเลิกใบเสร็จทำงานอย่างไร?</td></tr>
+<tr><td>ws_lon_cls_process_setmb_npl</td><td>LNCLOSEMONTH ถูก comment — ปิดชั่วคราวหรือถาวร?</td></tr>
+<tr><td>ws_lon_certificateinterest</td><td>DELETE lnsumintcert ทั้ง year แล้ว INSERT ใหม่ — ถ้า INSERT ล้มเหลวจะเกิดข้อมูลสูญหาย</td></tr>
+<tr><td>ws_lon_caltobank</td><td>Hardcode interest_rate = 5.25 — ควรดึงจาก config ไหม?</td></tr>
+<tr><td>ws_lon_trnsloancoll</td><td>wcf.NLoan.of_savetrn_lntrnres (comment: //pb125) — version compatibility กับ PB 12.5 เท่านั้นไหม?</td></tr>
+<tr><td>ws_lon_collredeem</td><td>INSERT lnreqcollmastredeem — การไถ่ถอนต้องผ่านขั้นตอนอนุมัติหรือ execute ทันที?</td></tr>
+<tr><td>ws_lon_docscan_datatransfer</td><td>ไม่พบ business logic ใดๆ ใน .cs 114 บรรทัด — หน้าจอนี้ทำงานจริงหรือไม่?</td></tr>
+</table>
+
+<p>---</p>
+
+<h2>7. ข้อสังเกตความไม่สอดคล้องระหว่างหน้าจอ</h2>
+
+<h3>7.1 Pattern สถาปัตยกรรมไม่สม่ำเสมอในกลุ่มเดียวกัน</h3>
+<p>- <strong>กลุ่มเบิกจ่าย:</strong> ws_lon_post_loan_receive ใช้ WCF แต่ ws_lon_post_loan_pxpmp ใช้ Direct SQL — ทำงานคล้ายกันแต่ implement ต่างกันโดยสิ้นเชิง</p>
+<p>- <strong>กลุ่มชำระคืน:</strong> ws_lon_payment ใช้ WCF + runProcessingFin แต่ ws_lon_prctrnpayin ใช้ runProcessing(LNPOSTTRNPAYIN) — ทั้งสองทำ post รายการชำระแต่คนละ path</p>
+
+<h3>7.2 Dead Code ที่พบ</h3>
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>ไฟล์</th><th>Dead Code</th></tr>
+<tr><td>ws_lon_reqloan.aspx.cs line 2021</td><td><code>//Gcoop.OpenIFrame2(...)</code> — commented, ใช้ OpenIFrame2Extend แทน</td></tr>
+<tr><td>ws_lon_cclpayin.aspx.cs line 110</td><td><code>// int result = loanService.of_saveccl_payin(...)</code> — save call หลักถูก comment</td></tr>
+<tr><td>ws_lon_cls_process_setmb_npl.aspx.cs line 78</td><td><code>//runProcessing("LNCLOSEMONTH", ...)</code> — commented</td></tr>
+<tr><td>ws_lon_proc_paymoneyreturn.aspx.cs lines 59-60</td><td><code>//POSTINTRETPAYOUTEGAT</code> สองบรรทัด — commented</td></tr>
+</table>
+
+<h3>7.3 wcf.NLoan.of_saveapv_lnreq — Implementation ไม่พบ</h3>
+<p>ถูกเรียกใน 2 หน้าจอ (ws_lon_apvloan, ws_lon_approve_loan) แต่ไม่พบ implementation ใน core/lncoopsrv.pbl ทุกไฟล์ — น่าจะอยู่ใน SWU extension หรือ MHD-specific PBService ที่ไม่ได้ checkout</p>
+
+<h3>7.4 MHD PBProcess มี process ที่ Core ไม่มี</h3>
+<table border="1" cellpadding="6" style="border-collapse:collapse">
+<tr><th>Process</th><th>อยู่ใน MHD</th><th>อยู่ใน Core</th></tr>
+<tr><td>PROCSETINTRETURNMHD</td><td>✅</td><td>❌</td></tr>
+<tr><td>PROCSETARRMTHNPL</td><td>✅</td><td>❌ (Core มี TARRMTHNPL แทน)</td></tr>
+<tr><td>SHRLONBAL</td><td>✅</td><td>✅</td></tr>
+</table>
+
+<h3>7.5 wd_lon_rightcoll.aspx — Path ไม่ตรง</h3>
+<p>ws_lon_reqloan.aspx.cs line 2023 อ้างถึง <code>wd_lon_rightcoll.aspx</code> แต่ไม่พบโฟลเดอร์นี้ใน <code>dlg/</code> ของ loan — อาจอยู่ path อื่นหรือเป็น dead path</p>
+
+<h3>7.6 ws_lon_docscan_datatransfer — หน้าจอ Empty</h3>
+<p>.cs ขนาด 114 บรรทัด แต่ไม่พบ runProcessing / wcf / INSERT / UPDATE ใดๆ — หน้าจออาจทำงานผ่าน base class หรือ JavaScript ที่ไม่อยู่ใน source นี้ ต้องตรวจสอบเพิ่มเติม</p>
+
+</body>
+</html>
