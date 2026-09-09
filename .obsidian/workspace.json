@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "raw/documents/prompt-mhd-loan-analysis.md",
+                "file": "log.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "prompt-mhd-loan-analysis"
+              "title": "log"
             }
           }
         ]
@@ -191,6 +191,9 @@
   },
   "active": "1c209f32c98a1a78",
   "lastOpenFiles": [
+    "raw/documents/prompt-mhd-loan-analysis.md",
+    "raw/documents/วิเคราะห์ทุกหน้าจอ-mhd.loan.md",
+    "raw/documents/วิเคราะห์ทีละหน้าจอ-mhd.loan.md",
     "raw/documents/Untitled.md",
     "Untitled.md",
     "log.md",
@@ -199,7 +202,6 @@
     "entities/gcoop-loan-system.md",
     "entities/gcoop-core.md",
     "concepts/gcoop-loan-collateral.md",
-    "raw/documents/prompt-mhd-loan-analysis.md",
     "queries/ระบบสินเชื่อ_Analysis_20260908.md",
     "queries/ระบบสินเชื่อ_Analysis_20260908.html",
     "SCHEMA.md",
