@@ -189,16 +189,17 @@
       "bases:Create new base": false
     }
   },
-  "active": "1c209f32c98a1a78",
+  "active": "6b9c96a5b3b2807d",
   "lastOpenFiles": [
+    "Untitled.md",
+    "raw/documents/Untitled.md",
+    "log.md",
     "entities/gcoop-overview.md",
     "entities/gcoop-mhd.md",
     "entities/gcoop-loan-system.md",
     "entities/gcoop-core.md",
     "concepts/gcoop-loan-collateral.md",
     "raw/documents/prompt-mhd-loan-analysis.md",
-    "log.md",
-    "Untitled.md",
     "queries/ระบบสินเชื่อ_Analysis_20260908.md",
     "queries/ระบบสินเชื่อ_Analysis_20260908.html",
     "SCHEMA.md",
