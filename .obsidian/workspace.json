@@ -191,17 +191,21 @@
   },
   "active": "1c209f32c98a1a78",
   "lastOpenFiles": [
-    "raw/documents/prompt-mhd-loan-analysis.md",
+    "SCHEMA.md",
     "log.md",
+    "raw/documents/prompt-mhd-loan-analysis.md",
+    "raw/documents/วิเคราะห์ทุกหน้าจอ-mhd.loan.md",
+    "raw/documents/วิเคราะห์ทีละหน้าจอ-mhd.loan.md",
+    "raw/documents/Untitled.md",
     "Untitled.md",
+    "entities/gcoop-overview.md",
+    "entities/gcoop-mhd.md",
+    "entities/gcoop-loan-system.md",
+    "entities/gcoop-core.md",
+    "concepts/gcoop-loan-collateral.md",
     "queries/ระบบสินเชื่อ_Analysis_20260908.md",
     "queries/ระบบสินเชื่อ_Analysis_20260908.html",
-    "SCHEMA.md",
     "index.md",
-    "raw/documents/core-loancollservice-cs.md",
-    "entities/gcoop-core.md",
-    "entities/gcoop-loan-system.md",
-    "concepts/gcoop-loan-collateral.md",
-    "entities/gcoop-mhd.md"
+    "raw/documents/core-loancollservice-cs.md"
   ]
 }
