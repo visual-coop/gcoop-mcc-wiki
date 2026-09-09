@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "SCHEMA.md",
+                "file": "log.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "SCHEMA"
+              "title": "log"
             }
           }
         ]
@@ -189,14 +189,14 @@
       "bases:Create new base": false
     }
   },
-  "active": "6b9c96a5b3b2807d",
+  "active": "1c209f32c98a1a78",
   "lastOpenFiles": [
     "raw/documents/prompt-mhd-loan-analysis.md",
+    "log.md",
+    "Untitled.md",
     "queries/ระบบสินเชื่อ_Analysis_20260908.md",
     "queries/ระบบสินเชื่อ_Analysis_20260908.html",
     "SCHEMA.md",
-    "Untitled.md",
-    "log.md",
     "index.md",
     "raw/documents/core-loancollservice-cs.md",
     "entities/gcoop-core.md",
