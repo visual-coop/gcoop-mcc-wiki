@@ -29,11 +29,28 @@
 - Outbound links: ทุก page มี ≥ 2 wikilinks ✅
 - raw/ documents เป็น orphan โดยธรรมชาติ (immutable sources ไม่ต้องลิงก์)
 
-## [2026-09-09] ingest | ระบบสินเชื่อ — สร้าง entity/concept pages ที่หายไป
-- สร้าง: entities/gcoop-loan-system.md (ระบบเงินกู้ครบ 33 หน้าจอ + 6 กลุ่ม + tables + WCF + PBProcess + dead code)
-- สร้าง: concepts/gcoop-loan-collateral.md (logic ค้ำประกัน lifecycle + risk points)
-- สร้าง: entities/gcoop-overview.md (ภาพรวม GCOOP tech stack + repo structure + AGENTS.md rules)
-- สร้าง: entities/gcoop-mhd.md (MHD paths + CoreSavingLibrary + WCF pattern)
-- สร้าง: entities/gcoop-core.md (PBService125 mapping + PBProcess Core vs MHD + encoding)
-- อัปเดต: index.md → 16 pages (เดิม 9 → บวก 5 entity/concept ใหม่ + master analysis query)
-- Source: สังเคราะห์จาก queries/loan-analysis-group*.md + queries/ระบบสินเชื่อ_Analysis_20260908.md
+## [2026-09-10] ingest | GCOOP Project Analysis - Extended Components
+- Created: raw/documents/core-smartcard-simulator.md (Smart Card Reader Simulator)
+- Created: raw/documents/core-pb-interest-service.md (PowerBuilder Interest Service)
+- Created: raw/documents/core-oracle-datapump-studio.md (Oracle Data Pump Studio)
+- Created: entities/gcoop-smartcard-system.md (Smart Card System Entity)
+- Created: entities/gcoop-database-tools.md (Database Management Tools)
+- Created: concepts/gcoop-interest-calculation.md (Interest Calculation System)
+- Updated: index.md (14 total pages, reorganized alphabetically)
+- Analysis scope: C# tools, PowerBuilder services, Oracle utilities
+
+## [2026-09-10] ingest | PBProcess Analysis - PowerBuilder Batch Systems
+- Created: raw/documents/gcoop-pbprocess-systems.md (PowerBuilder Process Systems)
+- Created: entities/gcoop-pbprocess-systems.md (PBProcess Entity)
+- Updated: index.md (16 total pages)
+- Analysis scope: PBProcess modules, DEPT_ProcessWID, POSTTOFIN_ProcessWID, batch monitoring
+- Found: 11 PB modules (pcaccount, pccommon, pcdeposit, etc.), 150+ .pbl files total
+- Key discoveries: cmprocessing table, XML config patterns, batch automation systems
+
+## [2026-09-10] ingest | MHD Screen Analysis Template and Methodology
+- Created: raw/documents/mhd-screen-analysis-template.md (Screen Analysis Template)
+- Created: concepts/gcoop-screen-analysis-methodology.md (Analysis Methodology)
+- Updated: index.md (18 total pages)
+- Analysis scope: ASP.NET + PowerBuilder integration analysis framework
+- Key features: 10-section template, PB integration handling, quality assurance rules
+- Target: Systematic screen analysis for GCOOP MHD loan system and others
