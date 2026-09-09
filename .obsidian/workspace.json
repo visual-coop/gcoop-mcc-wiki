@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "log.md",
+                "file": "concepts/gcoop-screen-analysis-methodology.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "log"
+              "title": "gcoop-screen-analysis-methodology"
             }
           }
         ]
@@ -191,12 +191,17 @@
   },
   "active": "1c209f32c98a1a78",
   "lastOpenFiles": [
+    "concepts/gcoop-loan-collateral.md",
+    "concepts/gcoop-interest-calculation.md",
+    "raw/documents/วิเคราะห์ทีละหน้าจอ-mhd.loan.md",
+    "raw/documents/วิเคราะห์ทุกหน้าจอ-mhd.loan.md",
+    "raw/documents/gcoop-pbprocess-systems.md",
+    "raw/documents/core-pb-interest-service.md",
+    "raw/documents/critical-mcc-chat-summary-20260909.md",
+    "log.md",
     "raw/documents/mhd-screen-analysis-template.md",
     "raw/documents/mhd-plsql-n-pk-lnnpl.md",
-    "raw/documents/gcoop-pbprocess-systems.md",
-    "raw/documents/critical-mcc-chat-summary-20260909.md",
     "raw/documents/core-smartcard-simulator.md",
-    "raw/documents/core-pb-interest-service.md",
     "raw/documents/core-oracle-datapump-studio.md",
     "raw/documents/core-loanservice-cs.md",
     "raw/documents/core-loancollservice-cs.md",
@@ -204,19 +209,14 @@
     "entities/gcoop-pbprocess-systems.md",
     "entities/gcoop-database-tools.md",
     "concepts/gcoop-screen-analysis-methodology.md",
-    "concepts/gcoop-interest-calculation.md",
     "index.md",
-    "log.md",
     "SCHEMA.md",
     "raw/documents/prompt-mhd-loan-analysis.md",
-    "raw/documents/วิเคราะห์ทุกหน้าจอ-mhd.loan.md",
-    "raw/documents/วิเคราะห์ทีละหน้าจอ-mhd.loan.md",
     "raw/documents/Untitled.md",
     "Untitled.md",
     "entities/gcoop-overview.md",
     "entities/gcoop-mhd.md",
     "entities/gcoop-loan-system.md",
-    "entities/gcoop-core.md",
     "queries/ระบบสินเชื่อ_Analysis_20260908.html"
   ]
 }
