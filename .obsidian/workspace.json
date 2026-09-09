@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "log.md",
+                "file": "raw/documents/prompt-mhd-loan-analysis.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "log"
+              "title": "prompt-mhd-loan-analysis"
             }
           }
         ]
@@ -189,10 +189,10 @@
       "bases:Create new base": false
     }
   },
-  "active": "6b9c96a5b3b2807d",
+  "active": "1c209f32c98a1a78",
   "lastOpenFiles": [
-    "Untitled.md",
     "raw/documents/Untitled.md",
+    "Untitled.md",
     "log.md",
     "entities/gcoop-overview.md",
     "entities/gcoop-mhd.md",
