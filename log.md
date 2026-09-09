@@ -28,3 +28,12 @@
 - Fixed: index.md อัปเดตครบ 9 pages
 - Outbound links: ทุก page มี ≥ 2 wikilinks ✅
 - raw/ documents เป็น orphan โดยธรรมชาติ (immutable sources ไม่ต้องลิงก์)
+
+## [2026-09-09] ingest | ระบบสินเชื่อ — สร้าง entity/concept pages ที่หายไป
+- สร้าง: entities/gcoop-loan-system.md (ระบบเงินกู้ครบ 33 หน้าจอ + 6 กลุ่ม + tables + WCF + PBProcess + dead code)
+- สร้าง: concepts/gcoop-loan-collateral.md (logic ค้ำประกัน lifecycle + risk points)
+- สร้าง: entities/gcoop-overview.md (ภาพรวม GCOOP tech stack + repo structure + AGENTS.md rules)
+- สร้าง: entities/gcoop-mhd.md (MHD paths + CoreSavingLibrary + WCF pattern)
+- สร้าง: entities/gcoop-core.md (PBService125 mapping + PBProcess Core vs MHD + encoding)
+- อัปเดต: index.md → 16 pages (เดิม 9 → บวก 5 entity/concept ใหม่ + master analysis query)
+- Source: สังเคราะห์จาก queries/loan-analysis-group*.md + queries/ระบบสินเชื่อ_Analysis_20260908.md
