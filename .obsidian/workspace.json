@@ -191,8 +191,23 @@
   },
   "active": "1c209f32c98a1a78",
   "lastOpenFiles": [
-    "SCHEMA.md",
+    "raw/documents/mhd-screen-analysis-template.md",
+    "raw/documents/mhd-plsql-n-pk-lnnpl.md",
+    "raw/documents/gcoop-pbprocess-systems.md",
+    "raw/documents/critical-mcc-chat-summary-20260909.md",
+    "raw/documents/core-smartcard-simulator.md",
+    "raw/documents/core-pb-interest-service.md",
+    "raw/documents/core-oracle-datapump-studio.md",
+    "raw/documents/core-loanservice-cs.md",
+    "raw/documents/core-loancollservice-cs.md",
+    "entities/gcoop-smartcard-system.md",
+    "entities/gcoop-pbprocess-systems.md",
+    "entities/gcoop-database-tools.md",
+    "concepts/gcoop-screen-analysis-methodology.md",
+    "concepts/gcoop-interest-calculation.md",
+    "index.md",
     "log.md",
+    "SCHEMA.md",
     "raw/documents/prompt-mhd-loan-analysis.md",
     "raw/documents/วิเคราะห์ทุกหน้าจอ-mhd.loan.md",
     "raw/documents/วิเคราะห์ทีละหน้าจอ-mhd.loan.md",
@@ -202,10 +217,6 @@
     "entities/gcoop-mhd.md",
     "entities/gcoop-loan-system.md",
     "entities/gcoop-core.md",
-    "concepts/gcoop-loan-collateral.md",
-    "queries/ระบบสินเชื่อ_Analysis_20260908.md",
-    "queries/ระบบสินเชื่อ_Analysis_20260908.html",
-    "index.md",
-    "raw/documents/core-loancollservice-cs.md"
+    "queries/ระบบสินเชื่อ_Analysis_20260908.html"
   ]
 }
