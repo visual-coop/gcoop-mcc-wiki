@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "index.md",
+                "file": "log.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "index"
+              "title": "log"
             }
           }
         ]
@@ -191,6 +191,7 @@
   },
   "active": "1c209f32c98a1a78",
   "lastOpenFiles": [
+    "index.md",
     "queries/ระบบสินเชื่อ_Analysis_20260908.md",
     "queries/loan-analysis-group6-process.md",
     "queries/loan-analysis-group5-collateral.md",
@@ -216,7 +217,6 @@
     "entities/gcoop-smartcard-system.md",
     "entities/gcoop-pbprocess-systems.md",
     "entities/gcoop-database-tools.md",
-    "index.md",
     "queries/ระบบสินเชื่อ_Analysis_20260908.html"
   ]
 }
