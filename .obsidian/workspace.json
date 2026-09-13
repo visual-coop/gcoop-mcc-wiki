@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "log.md",
+                "file": "index.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "log"
+              "title": "index"
             }
           }
         ]
@@ -191,6 +191,8 @@
   },
   "active": "1c209f32c98a1a78",
   "lastOpenFiles": [
+    "log.md",
+    "SCHEMA.md",
     "index.md",
     "queries/ระบบสินเชื่อ_Analysis_20260908.md",
     "queries/loan-analysis-group6-process.md",
@@ -207,7 +209,6 @@
     "raw/documents/gcoop-pbprocess-systems.md",
     "raw/documents/core-pb-interest-service.md",
     "raw/documents/critical-mcc-chat-summary-20260909.md",
-    "log.md",
     "raw/documents/mhd-screen-analysis-template.md",
     "raw/documents/mhd-plsql-n-pk-lnnpl.md",
     "raw/documents/core-smartcard-simulator.md",
@@ -216,7 +217,6 @@
     "raw/documents/core-loancollservice-cs.md",
     "entities/gcoop-smartcard-system.md",
     "entities/gcoop-pbprocess-systems.md",
-    "entities/gcoop-database-tools.md",
     "queries/ระบบสินเชื่อ_Analysis_20260908.html"
   ]
 }
