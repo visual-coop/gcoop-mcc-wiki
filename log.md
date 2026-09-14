@@ -60,6 +60,24 @@
   - entities/gcoop-mcc-infrastructure.md (10.5 KB) — OVERWRITE
 - Confidence: high (all findings from actual file inspection, no fabrication)
 
+## [2026-09-14] analyze | MCC Session 4: Integration & Summary Analysis
+- Sources synthesized: mcc-session1-web-analysis.md + mcc-session2-powerbuilder-analysis.md + mcc-session3-infrastructure-analysis.md + existing wiki pages (4 entities, 2 concepts, 1 comparison)
+- Output: raw/documents/mcc-session4-integration-summary.md (39 KB, OVERWRITE)
+- Content coverage:
+  1. Integration Architecture: 4-layer (Web→WCF→PB→Oracle→iReport) + 3 patterns (WCF/Direct/Queue)
+  2. End-to-end Business Flows: สมัครสมาชิก→ฝากเงิน→กู้→ชำระ→ตัดเงินเดือน→ปันผล
+  3. External Integration: ATM (ATMcoreWeb.svc), 9 banks (iBank.ini), Smart Card, Passbook Printer (PEM.ocx), Magnetic Card (Msre.ocx), Aero, SSH/SFTP
+  4. Deployment: IIS 32-bit (3 pools: MCC.saving/wcf/report), Build.bat, ClickOnce (winUPBOOK v1.0.0.9 + winLKE v1.0.0.12), Task Scheduler (1 min)
+  5. MCC vs MHD: PB core เหมือนกัน 100%, Web layer ต่างมาก, MCC +13% size, +24% ASPX
+  6. Security: SSO (icoopthai.co), Token locking, WCF auth (SsWsPass), Oracle kill sessions, SHA3 FT_ENC, Java WCFCALLING
+  7. Maintenance: daily batch, monthly payroll/dividend, Oracle backup (expdp+MD5), PLImporter, XMLConfig, CONVERT_MCC pipeline
+- Updated files (OVERWRITE):
+  - entities/gcoop-mcc.md (8 KB) — main overview, 4-layer arch, all modules table, MCC-specific features
+  - concepts/gcoop-mcc-integration-architecture.md (12 KB) — 3 patterns, full business flows, all external systems, security, deployment
+  - comparisons/gcoop-mcc-vs-mhd.md (8.5 KB) — complete comparison with MCC-specific screens and shared core analysis
+  - index.md — updated to 12 pages, improved summaries
+- Confidence: high (all findings from Session 1-3 documents, no fabrication)
+
 ## [2026-09-14] re-ingest | MCC Session 1 — Web Interface Deep Analysis (ปรับปรุงใหม่)
 - Source: raw/documents/mcc-session1-web-analysis.md (OVERWRITE, 45 KB)
 - ข้อมูลจริงจาก code inspection: 24 โมดูล, 436 ASPX, 16 active modules

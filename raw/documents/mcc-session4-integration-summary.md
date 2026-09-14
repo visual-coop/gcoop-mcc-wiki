@@ -1,467 +1,832 @@
-# MCC Integration Summary และ System Analysis - Session 4
+# MCC Session 4: Integration & Summary Analysis
+# บทสรุปการวิเคราะห์ครบถ้วน — ระบบสหกรณ์ GCOOP MCC
 
 **วันที่วิเคราะห์:** 2026-09-14  
-**โปรเจค:** MCC (Member Credit Cooperative) System  
-**Path:** `/root/gcoop_hermes/mcc/`  
-**Focus:** ระบบสหกรณ์ออมทรัพย์ MCC - Integration & Architecture Analysis
+**ขอบเขต:** สรุปรวม Sessions 1-3 พร้อม Integration Architecture  
+**Sources:**
+- Session 1: `mcc-session1-web-analysis.md` — 24 โมดูล, 436 ASPX
+- Session 2: `mcc-session2-powerbuilder-analysis.md` — 11 PBL, iSavBOfc, 9 banks
+- Session 3: `mcc-session3-infrastructure-analysis.md` — 676 jrxml, 39 PLSQL, deployment scripts
 
 ---
 
-## Executive Summary
+## 1. สถาปัตยกรรม Integration ภาพรวม (Web ↔ PowerBuilder ↔ Oracle ↔ iReport)
 
-การวิเคราะห์ครั้งนี้สรุปการรวมระบบ (System Integration) ของ MCC (Member Credit Cooperative) ซึ่งเป็นสหกรณ์ออมทรัพย์ที่มีความโดดเด่นด้าน HR Management, Document Management (RDC), และระบบสวัสดิการ โดยการวิเคราะห์จาก Sessions 1-3 แสดงให้เห็นถึงสถาปัตยกรรมที่ครบถ้วนและซับซ้อนของระบบ MCC
-
-## 1. MCC System Integration Map
-
-### 1.1 Overview Architecture
+### 1.1 แผนภาพสถาปัตยกรรมหลัก
 
 ```
-MCC Cooperative System Architecture
-├── Web Layer (ASP.NET)
-│   ├── HR Module (1,152 files) - ★ MCC ความเชี่ยวชาญ
-│   ├── RDC Module (748 files) - ★ Document Management เฉพาะ MCC
-│   ├── Welfare Module (441 files) - ★ ระบบสวัสดิการขยาย
-│   ├── Loan Module (688 files) - สินเชื่อ
-│   └── Member/Share Module (616 files) - สมาชิกและหุ้น
-├── Business Logic Layer (PowerBuilder)
-│   ├── PCKeeping (14.3MB) - Bookkeeping System
-│   ├── PCDeposit (11.9MB) - Deposit Management
-│   ├── PCLoan (9.0MB) - Loan Processing
-│   └── PCFinance (8.5MB) - Financial Operations
-├── Infrastructure Layer
-│   ├── Oracle Database - Multi-profile connections
-│   ├── iReport System - 2000+ report templates
-│   ├── XMLConfig - Configuration Management
-│   └── Desktop Tools - winUPBOOK, winLKE
-└── Integration Services
-    ├── WCF Services - Service layer integration
-    ├── PLSQL Packages - Database layer services
-    └── ClickOnce Deployment - Application distribution
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    GCOOP MCC — System Architecture                       │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  ┌──────────────────────────────────────────────────────────────┐       │
+│  │               Web Layer (ASP.NET 4.0)                        │       │
+│  │   Frame.Master → PageWebSheet → DataSets → ExecuteDataSource │       │
+│  │   24 โมดูล, 436 ASPX, AjaxPro, JsPostBack pattern          │       │
+│  │   Modules: hr(81), rdc(57), loan(38), mbshr(35), walfare(33) │       │
+│  └──────────────────────┬────────────────────┬─────────────────┘       │
+│                          │                    │                          │
+│              ┌───────────▼──────────┐  ┌─────▼─────────────────────┐  │
+│              │  WCF Services Layer  │  │  Oracle Direct (x86)       │  │
+│              │  WcfService125/*.svc │  │  System.Data.OracleClient  │  │
+│              │  n_loan, n_common,   │  │  10 connection strings     │  │
+│              │  n_deposit, n_keeping│  │  TH8TISASCII charset       │  │
+│              │  n_finance, n_mbshr  │  └────────────────────────────┘  │
+│              │  n_account, n_divavg │                                   │
+│              │  n_investment        │                                   │
+│              │  ATMcoreWeb.svc      │                                   │
+│              └───────────┬──────────┘                                   │
+│                          │                                               │
+│  ┌───────────────────────▼──────────────────────────────────────┐       │
+│  │          PowerBuilder Batch Layer (PBProcess)                 │       │
+│  │   pbprocess.pbl (entry) → pccommon.pbl → domain libs         │       │
+│  │   pckeeping(14.4MB), pcdeposit(11.9MB), pcloan(9MB),        │       │
+│  │   pcfinance(8.5MB), pcdivavg(3.9MB), pcinsurance(1.7MB)     │       │
+│  └───────────────────────┬──────────────────────────────────────┘       │
+│                          │                                               │
+│  ┌───────────────────────▼──────────────────────────────────────┐       │
+│  │              Oracle Database                                   │       │
+│  │   192.168.10.200/gcoop (Main MCC) | 43.229.79.117 (Cloud)   │       │
+│  │   PLSQL: 17 Functions + 7 Packages + 8 Types                 │       │
+│  │   Java stored proc: WCFCALLING (HTTP POST from Oracle)        │       │
+│  └───────────────────────┬──────────────────────────────────────┘       │
+│                          │                                               │
+│  ┌───────────────────────▼──────────────────────────────────────┐       │
+│  │              iReport Engine (Java)                             │       │
+│  │   676 .jrxml templates | 117 CriteriaIReport schemas         │       │
+│  │   Queue: Web → %TEMP%/*.bat → Task Scheduler (1 min)         │       │
+│  │   Output: C:\GCOOP\Saving\Report\PDF\                        │       │
+│  └──────────────────────────────────────────────────────────────┘       │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 1.2 Integration Flow Patterns
+### 1.2 สาม Integration Patterns หลัก
 
-#### Pattern 1: Web-to-PowerBuilder Integration
+**Pattern A: Web → WCF → PowerBuilder → Oracle**
 ```
-ASP.NET Applications → WCF Services → PowerBuilder PBProcess → Oracle Database
-   ↑                     ↑              ↑                    ↑
-HR/RDC/Welfare      Service Layer    Business Logic     Data Persistence
-```
-
-#### Pattern 2: Desktop Integration
-```
-winUPBOOK/winLKE → Oracle Direct → ClickOnce Updates
-       ↑              ↑                  ↑
-Passbook/Card     Database Access    Auto-deployment
+ASP.NET Page (ws_lon_apvloan.aspx.cs)
+  └─ wcf.NLoan.of_gennewcontractno(state.SsWsPass, req_coopid, loantype_code)
+     └─ n_loan.svc (WcfService125)
+        └─ PowerBuilder NVO: n_cst_process_service.of_pbprocess(as_procid)
+           └─ Oracle INSERT/UPDATE (pcloan.pbl transaction)
 ```
 
-#### Pattern 3: Report Integration
+**Pattern B: Web → Oracle Direct**
 ```
-Web Applications → iReport Engine → JRXML Templates → PDF/Print Output
-      ↑               ↑                ↑                 ↑
-Business Data    Report Builder    2000+ Templates   Document Output
-```
-
-## 2. MCC Internal Component Integration
-
-### 2.1 Core Component Relationships
-
-#### 2.1.1 Web Application Integration
-- **Framework**: ASP.NET Web Forms with Master Page (`Frame.Master`)
-- **Business Modules**: 23 active modules with clear separation
-- **Shared Components**: User Controls (DsMain.ascx, DsList.ascx)
-- **Configuration**: XML-based configuration management
-
-#### 2.1.2 PowerBuilder Module Dependencies
-```
-Library Dependencies (liblist):
-pbprocess.pbl → pccommon.pbl → [Domain Modules]
-                     ↓
-   ┌─────────────────┼─────────────────┐
-   ↓                 ↓                 ↓
-pckeeping.pbl    pcdeposit.pbl     pcloan.pbl
-   ↓                 ↓                 ↓
-pcfinance.pbl    pcmbshr.pbl      pcinsurance.pbl
+ASP.NET Page (ws_hr_payroll_process.aspx.cs)
+  └─ WebUtil.QuerySdt("SELECT count(post_status) FROM hrpayroll WHERE ...")
+     └─ Oracle (System.Data.OracleClient x86)
+        └─ Return Sdt (Simple DataTable)
 ```
 
-#### 2.1.3 Database Integration Points
-- **Primary DB**: Oracle with multi-profile support (MCC@Siam, MCC@Dept, Default@Cloud)
-- **Connection Management**: ODP.NET with Unicode support
-- **PLSQL Integration**: Custom types, packages, and procedures
-- **Audit System**: PBLog table for operation tracking
-
-### 2.2 MCC-Specific Integration Features
-
-#### 2.2.1 MCC Custom Screens
-1. **ws_mem_adjfamily_mcc.aspx** - Family member management with MCC validation
-2. **ws_acc_budget_setamt_mcc.aspx** - MCC-specific budget management
-3. **ws_kep_fileimport_mcc.aspx** - MCC data import functionality
-
-#### 2.2.2 MCC Configuration Profiles
-- **Production**: `web.siamcoop.com/gcoop` (MCC@Siam)
-- **Cloud Environment**: `43.229.79.117/gcoop` (Default@Cloud)
-- **Department Testing**: `iscotestmrc` schema (MCC@Dept)
-- **Collection Testing**: `iscomrckep` schema (เทสเรียกเก็บ)
-
-## 3. MCC Deployment Architecture
-
-### 3.1 Infrastructure Components
-
-#### 3.1.1 Application Servers
-- **Web Server**: `mcc.siamcoop.com` (Production domain)
-- **Database Servers**: 
-  - Production: `web.siamcoop.com/gcoop`
-  - Cloud: `43.229.79.117/gcoop`
-  - Internal: `10.20.240.x` subnet
-
-#### 3.1.2 File System Architecture
+**Pattern C: Report Queue (Task Scheduler)**
 ```
-MCC Deployment Structure:
+Web App → สร้าง .bat ใน %TEMP%
+  └─ Windows Task Scheduler (RunReport.xml) ทำงานทุก 1 นาที
+     └─ runreport.bat: execute .bat files ทั้งหมด
+        └─ pbreport.exe → reportdepositmcc.pbl / reportfinancemcc.pbl / ...
+           └─ iReport Engine → .jrxml → PDF → C:\GCOOP\Saving\Report\PDF\
+              └─ runreportdel.bat: ล้าง .bat ที่ execute แล้ว
+```
+
+### 1.3 Desktop Integration (iSavBOfc)
+
+```
+iSavBOfc (PowerBuilder 12.5 + PFC 10.5)
+  ├─ ibanktrn.pbl (Transaction engine, 2.6 MB)
+  ├─ iimportdept.pbl (Import department, 4.4 MB)
+  ├─ cmsrv_fin.pbl (Finance service, 2.1 MB)
+  ├─ cmsrv_loan.pbl (Loan service, 1.1 MB)
+  └─ Oracle (192.198.1.171/gcoop — TH8TISASCII)
+     └─ iBank.ini → 9 ธนาคาร Direct Credit
+```
+
+---
+
+## 2. End-to-End Business Flows
+
+### 2.1 กระบวนการสมัครสมาชิก (Member Join)
+
+```
+[1] ยื่นใบสมัคร
+    └─ ws_mem_apvappl.aspx (mbshr module)
+       └─ บันทึกข้อมูลสมาชิกผ่าน ExecuteDataSource → Oracle
+
+[2] อนุมัติสมาชิก
+    └─ ws_mem_apvappl.aspx → อนุมัติโดยเจ้าหน้าที่
+
+[3] กำหนดกลุ่มสมาชิก
+    └─ ws_mem_ucfmembgroup.aspx → ตั้งค่ากลุ่ม (ใช้ใน Payroll deduction)
+
+[4] ออกบัตรสมาชิก (ถ้ามี)
+    └─ winLKE (C# + Msre.ocx) → เขียน magnetic card
+    └─ ws_ixp_mb_register_cardPerson.aspx (IXP module) → ลงทะเบียนบัตร
+
+[5] ข้อมูลสมาชิกครบถ้วน
+    └─ ws_mem_memberdetail.aspx
+       └─ 34+ DataSets: dsMain, dsDetail, dsLoan, dsShare, dsKeep, dsRdc,
+                         dsLinkATM, dsWalfare, dsInsurance, dsFamily ฯลฯ
+```
+
+### 2.2 กระบวนการฝากเงิน (Deposit)
+
+```
+[1] เปิดบัญชีฝาก
+    └─ dw_slipopen_name.jrxml (iReport) → ใบเปิดบัญชี
+
+[2] รับฝากเงิน (ประจำวัน)
+    └─ iSavBOfc: ibanktrn.pbl → บันทึก transaction
+
+[3] ประมวลผลดอกเบี้ย (รายวัน/รายเดือน)
+    └─ PBProcess: pcdeposit.pbl (11.9 MB)
+       └─ n_cst_keeping_process.of_rcvprocess() → คำนวณดอกเบี้ย
+
+[4] ประมวลผลเงินฝากประจำ (ws_kep_process_keep)
+    └─ proc_type 2-5 แยกตาม: MemberGroup / MemberNo / Category / DebtAgent
+    └─ PBProcess: pckeeping.pbl (14.4 MB) → บัญชีรับจ่าย
+
+[5] อัพเดทสมุดบัญชี
+    └─ winUPBOOK (VB.NET) → GetRule_BookPage() ← DPDEPTCONSTANT
+       └─ PEM.ocx → Passbook Printer Hardware
+```
+
+### 2.3 กระบวนการเงินกู้ (Loan)
+
+```
+[1] ยื่นคำขอกู้
+    └─ ws_lon_reqloan.aspx
+       └─ DataSets: dsMain, dsDetail, dsLoanClr, dsLoanColl, dsLoanCreditScoll, dsLoanIns, dsLoanExpense ฯลฯ
+       └─ JsPostBack: ReCalSalary, CalPayMonth, ReCalPeriodPay, InsertRowColl, ChgInsPlan
+       └─ LOANREQUEST_DOCNO = "AUTO" → Oracle auto-generate
+
+[2] Credit Scoring
+    └─ ws_lon_ucfloancreditscoring.aspx → กำหนดค่า credit score
+    └─ ws_elc_score_committee.aspx → คะแนนคณะกรรมการ
+
+[3] อนุมัติสินเชื่อ
+    └─ ws_lon_apvloan.aspx
+       └─ wcf.NLoan.of_gennewcontractno(state.SsWsPass, req_coopid, loantype_code)
+          └─ WCF → PBProcess → Oracle: ออกเลขสัญญา
+       └─ CoopId logic: state.SsCoopControl == "003001" || "074001" → order_type = "3"
+
+[4] บันทึกสัญญา/รับเงินกู้
+    └─ ws_lon_apvpromise.aspx → บันทึกสัญญา
+    └─ ws_lon_rcvloan.aspx → รับเงิน
+    └─ ws_lon_post_loan_receive.aspx → Post รับสินเชื่อ
+
+[5] ชำระงวด (รายเดือน)
+    └─ ws_lon_payment.aspx
+       └─ WebUtil.UseMembUptoToken() → ล็อคสมาชิก (Token-based locking)
+       └─ SLIPTYPE_CODE = "PX" (slip ประเภทชำระ)
+       └─ DataSets: dsMain, dsDetailShare, dsDetailLoan, dsDetailEtc, dsDetailMoneytype
+    └─ PBProcess: pcloan.pbl
+       └─ n_cst_keeping_process.of_processloan()
+       └─ n_cst_keeping_process.of_processloanocalint() ← คำนวณดอกเบี้ย
+       └─ n_cst_proc_slmnyret.of_postslip_payinloan()
+       └─ n_cst_proc_slmnyret.of_postpayinslippx_mcc()  ← MCC-specific
+
+[6] ตัดเงินเดือน (Payroll Deduction)
+    └─ iSavBOfc: ibanktrn.pbl + cmsrv_fin.pbl + pccomloan.pbl
+       └─ iBank.ini: เลือกธนาคาร (KTB default, รองรับ 9 ธนาคาร)
+       └─ Export Direct Credit file → ธนาคาร
+
+[7] ติดตามหนี้/NPL
+    └─ Oracle Package: n_pk_lnnpl → ติดตาม NPL
+    └─ ws_lon_paintloan.aspx → ดูยอดเงินกู้
+```
+
+### 2.4 กระบวนการชำระหนี้ (Repayment)
+
+```
+[1] ชำระปกติ
+    └─ ws_lon_payment.aspx → รับชำระ / ตัดเงินเดือน
+
+[2] ขอพักชำระหนี้
+    └─ ws_lon_reqpauseloan.aspx → ยื่นขอ
+    └─ ws_lon_apvreqpauseloan.aspx → อนุมัติ
+
+[3] ชำระคืนเงิน (ประมวลผล)
+    └─ ws_lon_proc_moneyreturn.aspx → ประมวลผลคืนเงิน
+    └─ ws_lon_proc_paymoneyreturn.aspx → จ่ายคืนเงิน
+    └─ PBProcess: n_cst_proc_slmnyret.of_poststm_contract() ← post loan statement
+    └─ PBProcess: n_cst_proc_slmnyret.of_setlistcontnewlrtmcc() ← MCC-specific
+
+[4] สิ้นสุดสัญญา
+    └─ Oracle: Oracle Package n_pk_doccontrol → ควบคุมเอกสาร
+    └─ RDC: ws_rdc_documentsafe.aspx → เก็บเอกสารสัญญาในตู้นิรภัย
+```
+
+### 2.5 กระบวนการปันผล/เฉลี่ยคืน (Dividend)
+
+```
+[1] ประมวลผลเฉลี่ยคืน (รายงวด)
+    └─ PBProcess: pcdivavg.pbl (3.9 MB) → คำนวณเงินปันผล/เฉลี่ยคืน
+
+[2] iReport รายงาน
+    └─ ir_didurt_* (20 templates) — รายงานเงินปันผล
+    └─ ir_diinvt_* (18 templates) — รายงานเงินปันผลการลงทุน
+
+[3] จ่ายเงิน
+    └─ iSavBOfc: ibanktrn.pbl → จ่ายเงินปันผล
+    └─ iBank.ini → Direct Credit ผ่านธนาคาร
+```
+
+### 2.6 กระบวนการ Payroll (พนักงาน)
+
+```
+[1] ประมวลผลเงินเดือน
+    └─ ws_hr_payroll_process.aspx
+       └─ SELECT count(post_status) FROM hrpayroll WHERE coop_id = '...' AND payroll_period = '...'
+       └─ SELECT firstworkdate, lastworkdate FROM amworkcalendar WHERE year = '...' AND month = '...'
+       └─ คำนวณปี พ.ศ.: Convert.ToDecimal(DateTime.Now.Year) + 543
+
+[2] โอนข้อมูลไปการเงิน
+    └─ ws_hr_trantofin.aspx → โอนข้อมูล HR → การเงิน
+
+[3] จ่ายเงินเดือน
+    └─ iSavBOfc: iimportdept.pbl → import department payroll
+    └─ iBank.ini (9 ธนาคาร) → Direct Credit / Internet Payment
+
+[4] หักสหกรณ์
+    └─ cmsrv_loan.pbl + pccomloan.pbl → หักชำระสินเชื่อจากเงินเดือน
+```
+
+---
+
+## 3. Integration Points กับระบบภายนอก
+
+### 3.1 ATM Integration
+
+```
+ช่องทาง ATM:
+├─ WCF Service: ATMcoreWeb.svc (localhost/ATM/CoreCoop/ATMcoopServiceWeb/)
+├─ Web: dsLinkATM ใน ws_mem_memberdetail.aspx — แสดงข้อมูล ATM สมาชิก
+├─ BackOffice: amscwins_amtksb.txt → w_sheet_atm_bay_post
+│   └─ Process ID: 031001 — เชื่อมต่อ Bay Bank/Krungsri ATM
+└─ ACCID ATM: dsAccidAtm DataSet ใน ws_mem_memberdetail
+```
+
+### 3.2 ธนาคาร (9 ธนาคาร Direct Credit)
+
+```
+iBank.ini — การโอนเงินเดือน/สวัสดิการผ่าน Direct Credit:
+├─ [002-DC] BBL (Bangkok Bank) Direct Credit
+├─ [004-DC] K-Bank Direct Credit
+├─ [006-DC] KTB (กรุงไทย) Direct Credit — format: FIXED-POST, .trf
+├─ [006-IP] KTB Internet Payment — format: FIXED-POST, .DAT (default company_bank=006)
+├─ [014-DC] SCB Direct Credit — company_code=tpds408
+├─ [017-MD] Citibank Media Clearing
+├─ [022-DC] PEA (การไฟฟ้า) Direct Credit
+├─ [025-SM] BAAC Same-day
+└─ [034-DC] TKS (BAAC) Direct Credit — save_path=A:\
+
+Export files:
+├─ ws_fin_exptobank.aspx (IXP module) — Export การเงินไปธนาคาร
+├─ ws_lon_exptobank.aspx — Export สินเชื่อไปธนาคาร
+└─ ws_fin_exptobank_slipno.aspx — Export ไปธนาคาร (slip-based)
+```
+
+### 3.3 Smart Card
+
+```
+Smart Card Integration:
+└─ ws_mem_memberdetail.aspx → PostSmartCard event
+   └─ อ่านบัตรอัจฉริยะสมาชิก (ข้อมูลสมาชิกจากบัตร)
+```
+
+### 3.4 Passbook Printer (เครื่องพิมพ์สมุดบัญชี)
+
+```
+print.formsets.xml — Passbook Printer Stations:
+├─ FULLPRINT: 10.20.241.35 (SERVER)
+├─ Passbook15-17: 192.168.99.15-17 (Stations)
+├─ Passbook20: 192.168.99.20
+├─ Passbook25: 192.168.99.25
+└─ printloan: 192.168.99.11 (เครื่องพิมพ์กู้)
+
+winUPBOOK (VB.NET):
+├─ PEM.ocx → ควบคุม PEMS Passbook Printer Hardware
+├─ GetRule_BookPage() ← DPDEPTCONSTANT (Oracle):
+│   Pagetotal_Pb, Lineperpage_Pb, Linenomidpage_Pb, Nlinenextmid_Pb
+└─ ClickOnce Deploy: http://[server]/pbUpbook/ (versions 1.0.0.5 → 1.0.0.9)
+```
+
+### 3.5 Magnetic Card Reader
+
+```
+winLKE (C#):
+├─ Msre.ocx → MSRE Magnetic Stripe Reader Encoder
+├─ winLKE.exe ที่ C:\GCOOP_ALL\AERO\winLKE\Drivers\winLKEAppDevices\
+├─ Win32 P/Invoke: ShowWindow, MoveWindow, SetWindowPos, FindWindow
+└─ ClickOnce Deploy: version 1.0.0.12 (.NET 4.6.1)
+```
+
+### 3.6 ระบบ Aero (สหกรณ์ภายนอก)
+
+```
+Aero Cooperative Integration:
+├─ Oracle Connection: 203.154.158.107:1521/gcoop (iscoaero, iscoaerodep)
+├─ ws_wc_approve_newmemb_aero.aspx — สมาชิกใหม่ Aero
+├─ ws_wc_walfare_req_edit_aero.aspx — คำขอสวัสดิการ Aero
+└─ ws_kep_exportfile_aero.aspx — Export ไฟล์ Aero
+```
+
+### 3.7 SSH/SFTP (ระบบภายนอก)
+
+```
+Renci.SshNet (316 .cs files embedded):
+├─ SftpClient — โอนไฟล์ backup ผ่าน SFTP
+├─ SshClient — execute commands บน remote server
+├─ ForwardedPort — port forwarding
+└─ PrivateKeyAuthenticationMethod — SSH key authentication
+```
+
+---
+
+## 4. Deployment Architecture
+
+### 4.1 IIS 32-bit Application Pools
+
+```
+Deploy-IIS-Extend.v4.bat สร้าง:
+
+App Pool       Runtime  32-bit  Identity          หน้าที่
+─────────────────────────────────────────────────────────
+MCC.saving     v4.0     ✅      SpecificUser       ASP.NET Web App
+MCC.wcf        v2.0     ✅      default            WCF Services
+MCC.report     v2.0     ✅      NetworkService     Report Engine (Classic Pipeline)
+
+ทุก Pool: enable32BitAppOnWin64=true, Idle Timeout=30 min
+
+Virtual Applications:
+├─ /MCC                        → %ROOT_DIR%\GCOOP_ALL\MCC
+├─ /MCC/GCOOP/Saving           → MCC.saving (ASP.NET 4.0)
+├─ /MCC/GCOOP/WcfService       → MCC.wcf (WCF 2.0)
+└─ /MCC/GCOOP/WebServiceReport → MCC.report (Classic Pipeline)
+
+MIME Types เพิ่ม:
+├─ .pbd → application/pbd-stream (PowerBuilder compiled library)
+└─ .trf → text/plain (KTB Direct Credit transfer file)
+```
+
+### 4.2 Build Process (Build.bat)
+
+```
+Build.bat ลำดับการ build:
+
+1. wmic process where (name="Javaw.exe") delete    ← Kill iReport Java
+2. PATH = %WINDIR%\Microsoft.NET\Framework\v4.0.30319
+3. NET STOP W3SVC                                   ← Stop IIS
+4. msbuild.exe GCOOP_MCC.sln /t:Clean              ← Clean solution
+5. msbuild.exe Extend_Saving.csproj /t:rebuild     ← Build Web App
+6. NET START W3SVC                                  ← Start IIS
+
+Active Project: Extend_Saving.csproj
+(Other projects commented out: DataLibrary, GcoopServiceCs, WcfService, 
+ WebServiceReport, CoreSavingLibrary, SingleSignOn, Saving, 
+ Extend_WcfService, Extend_WebServiceReport)
+```
+
+### 4.3 ClickOnce Deployment (Client Tools)
+
+```
+winUPBOOK (Passbook Printer Tool):
+├─ URL: http://[server]/pbUpbook/
+├─ Versions: 1.0.0.5 → 1.0.0.9 (5 versions)
+├─ Target: .NET 4.0, x86
+└─ Auto-update: ClickOnce ตรวจสอบ version ทุก launch
+
+winLKE (Magnetic Card Reader):
+├─ Version: 1.0.0.12
+├─ Target: .NET 4.6.1
+└─ Deployment: ClickOnce ผ่าน IIS
+```
+
+### 4.4 Windows Task Scheduler (Report Queue)
+
+```
+RunReport.xml (Task Scheduler):
+├─ Author: COOPWEB\Administrator (2015-12-16)
+├─ Trigger: CalendarTrigger — ทุก 1 นาที (PT1M), ทุกวัน
+├─ Execution Limit: P3D (3 วัน)
+├─ MultipleInstances: IgnoreNew
+└─ Actions:
+   1. runreport.bat: for %%i in (%SystemRoot%\Temp\*.bat) do %%i
+   2. runreportdel.bat: del %SystemRoot%\Temp\*.bat
+```
+
+### 4.5 Directory Structure บน Server
+
+```
 C:\GCOOP_ALL\
-├── AERO\                 - Desktop applications (winUPBOOK)
-│   └── winUPBOOK\        - Passbook update tool
-├── CORE\GCOOP\           - Core shared libraries
-├── MCC\GCOOP\            - MCC-specific extensions
-│   ├── Saving\           - Web applications (196MB)
-│   ├── PBProcess\        - Business logic (68MB)
-│   ├── iReport\          - Report system (59MB)
-│   └── XMLConfig\        - Configuration (3.7MB)
-└── PBSLIP_MCC\           - PBSlip client applications
+├─ MCC\
+│   └─ GCOOP\
+│       ├─ Saving\            (ASP.NET 4.0 Web App)
+│       │   ├─ Applications\  (24 modules)
+│       │   ├─ CriteriaIReport\ (117 schemas)
+│       │   ├─ DataWindow\    (27 folders)
+│       │   ├─ IREPORTFILE\
+│       │   ├─ SlipApp/, SlipPB\
+│       │   └─ Web.config
+│       ├─ WcfService125\     (WCF Services)
+│       │   └─ n_*.svc        (10 services)
+│       ├─ PBProcess\         (Batch Engine)
+│       │   └─ pbprocess.exe + 11 .pbl libs
+│       ├─ PBReport125\       (Report Engine)
+│       │   └─ pbreport.exe + RunReport.xml
+│       ├─ iReport\
+│       │   └─ Reports\       (676 .jrxml)
+│       ├─ XMLConfig\         (Configuration)
+│       │   └─ *.xml          (connection_string, wcf_detail, print.*)
+│       └─ PLSQL\             (Database Scripts)
+│           └─ PLImporter.exe + 39 .pls
+├─ CORE\GCOOP\PBProcess\      (Core/Shared PBProcess)
+├─ AERO\
+│   └─ winUPBOOK\             (Passbook Printer)
+│   └─ winLKE\                (Magnetic Card)
+└─ PBSLIP_MCC\                (SlipPB local cache)
+
+C:\GCOOP\Saving\Report\PDF\   (PDF output)
 ```
 
-#### 3.1.3 Auto-Update Infrastructure
-- **Technology**: ClickOnce deployment mechanism
-- **Update Server**: `http://mcc.siamcoop.com/MCC/GCOOP/Saving/SlipPB/SlipPB/`
-- **Client Path**: `C:\PBSLIP_MCC\`
-- **Version Management**: Automated version control with rollback support
+### 4.6 Database Environments
 
-### 3.2 Network Architecture
-
-#### 3.2.1 Production Environment
-- **Primary Domain**: `mcc.siamcoop.com`
-- **SSL Configuration**: HTTPS support with certificates
-- **Load Balancing**: Web server cluster support
-- **Database Clustering**: Oracle RAC configuration
-
-#### 3.2.2 Development/Testing Environment
-- **Cloud Infrastructure**: `43.229.79.117` for development
-- **Internal Network**: `10.20.240.x` for database servers
-- **Branch Isolation**: Separate schemas for different environments
-
-### 3.3 Hardware Integration Points
-
-#### 3.3.1 Desktop Device Integration
-- **Passbook Printers**: COM-based PEMLib integration
-- **Magnetic Card Readers**: ActiveX Msre.ocx control
-- **Print Services**: Network printer support with form mapping
-
-#### 3.3.2 Security Hardware
-- **Smart Card Support**: Through specialized COM interfaces
-- **Biometric Integration**: Extensible hardware interface framework
-- **Audit Devices**: Screen capture and logging hardware
-
-## 4. MCC Business Characteristics
-
-### 4.1 MCC ความเชี่ยวชาญหลัก
-
-#### 4.1.1 HR-Focused Cooperative ⭐
-- **Module Size**: 1,152 files (81 ASPX + 648 C# files)
-- **Functionality**: ครบวงจรด้านทรัพยากรบุคคล
-- **Features**: 
-  - Employee management และ payroll
-  - Performance evaluation system
-  - Training and development tracking
-  - HR compliance and reporting
-
-#### 4.1.2 Document Management Excellence (RDC) ⭐
-- **Module Size**: 748 files (57 ASPX + 392 C# files)
-- **Functionality**: ระบบจัดการเอกสารแบบดิจิทัล
-- **Features**:
-  - Document workflow management
-  - Digital signature integration
-  - Document versioning and approval
-  - Automated document generation
-
-#### 4.1.3 Comprehensive Welfare System ⭐
-- **Module Size**: 441 files (33 ASPX + 241 C# files)
-- **Functionality**: ระบบสวัสดิการสมาชิกขยาย
-- **Features**:
-  - Health insurance management
-  - Education support programs
-  - Emergency assistance tracking
-  - Retirement planning services
-
-### 4.2 Supporting Business Modules
-
-#### 4.2.1 Financial Core Operations
-- **Loan System**: 688 files - สินเชื่อและเงินกู้
-- **Member/Share**: 616 files - การจัดการสมาชิกและหุ้น
-- **Finance**: 284 files - การเงินและบัญชี
-- **Keeping**: 91 files - เงินฝากออมทรัพย์
-
-#### 4.2.2 Specialized Services
-- **Project Management**: 256 files - บริหารโครงการ
-- **Investment**: 117 files - การลงทุน
-- **Insurance**: 118 files - ประกันภัย
-- **Member Assistance**: 207 files - ช่วยเหลือสมาชิก
-
-### 4.3 MCC Business Process Integration
-
-#### 4.3.1 Member Lifecycle Management
 ```
-สมาชิกใหม่ → HR Onboarding → Document Setup (RDC) → Welfare Registration
-     ↓              ↓               ↓                    ↓
-Account Setup → Loan Eligibility → Insurance Setup → Service Access
+Oracle Connection Profiles:
+
+Production (Web.config):
+├─ ConnectionString  : 192.168.10.200/gcoop — iscorfd (Main MCC)
+├─ ConnectionString3 : 172.17.30.45/gcoop  — iscobtg (BTG สาขา)
+├─ ConnectionString5 : 43.229.79.117/gcoop — iscomrc (MRC)
+└─ ConnectionStringAERO: 203.154.158.107:1521/gcoop — iscoaero
+
+XMLConfig Profiles (server.connection_string.xml):
+├─ Default@Cloud: 43.229.79.117/gcoop — iscomrc
+├─ MCC@Siam: web.siamcoop.com/gcoop — iscomrc
+├─ MCC@Dept: 43.229.79.117/gcoop — iscotestmrc
+└─ เทสเรียกเก็บ10/68: 43.229.79.117/gcoop — iscomrckep
+
+iSavBOfc:
+├─ Production: 192.198.1.171/gcoop — iscodoaeuat (Branch 057001)
+├─ Dev/Test: localhost/gcoop — iscoaero (Branch 077001)
+└─ Legacy: 192.198.1.201/saving — dbo (rfscold)
+
+ทุก connection: charset=TH8TISASCII, AutoCommit=false
 ```
-
-#### 4.3.2 Document Workflow Integration
-```
-Document Creation (RDC) → Approval Workflow → Digital Signature → Archive
-         ↑                       ↓                 ↓            ↓
-   HR/Finance Input → Automated Routing → Audit Trail → Report Generation
-```
-
-## 5. MCC Technical Observations
-
-### 5.1 Architecture Strengths
-
-#### 5.1.1 Modular Design Excellence
-- **Clear Separation**: Business modules แยกตามฟังก์ชัน
-- **Reusable Components**: User Control pattern throughout
-- **Scalable Architecture**: Support for multiple environments
-- **Configuration Management**: XML-based flexible configuration
-
-#### 5.1.2 Integration Maturity
-- **Multi-Layer Integration**: Web → WCF → PowerBuilder → Oracle
-- **Cross-Platform Support**: .NET + PowerBuilder + Oracle
-- **Hardware Integration**: Extensive device support
-- **Report Integration**: Comprehensive reporting framework
-
-#### 5.1.3 Thai Language Support
-- **Database Charset**: TH8TISASCII for proper Thai handling
-- **Application Encoding**: UTF-8 with BOM for .NET applications
-- **PowerBuilder Thai**: Windows-874 encoding support
-- **Unicode Database**: Full Unicode support in Oracle
-
-### 5.2 Technical Infrastructure Quality
-
-#### 5.2.1 Database Architecture
-- **Multi-Profile Support**: Production, development, testing environments
-- **Schema Isolation**: Separate schemas for different purposes
-- **PLSQL Integration**: 42+ stored procedures and packages
-- **Audit Trail**: Comprehensive logging and tracking
-
-#### 5.2.2 Deployment Excellence
-- **ClickOnce Technology**: Automated application distribution
-- **Version Management**: Comprehensive version control
-- **Configuration Management**: Centralized XML configuration
-- **Auto-Update**: Seamless application updates
-
-#### 5.2.3 Security Implementation
-- **Connection Security**: Encrypted database connections
-- **Schema Isolation**: Security through database schemas
-- **Audit Logging**: Comprehensive operation tracking
-- **Hardware Security**: Secure device integration
-
-### 5.3 Performance and Scalability
-
-#### 5.3.1 System Capacity
-- **File Volume**: 6,721+ web application files
-- **Database Size**: Multiple GB of business data
-- **Report Templates**: 2000+ JRXML report definitions
-- **PowerBuilder Libraries**: 65 .pbl + 51 .pbd files
-
-#### 5.3.2 Processing Capabilities
-- **Batch Processing**: Automated end-of-day/month/year processes
-- **Real-time Operations**: Online transaction processing
-- **Report Generation**: High-volume report processing
-- **Multi-user Support**: Concurrent user access support
-
-## 6. MCC Maintenance Procedures
-
-### 6.1 System Maintenance Workflows
-
-#### 6.1.1 Database Maintenance
-```
-Daily Tasks:
-- Transaction log backup
-- Index maintenance
-- Statistics update
-- Performance monitoring
-
-Weekly Tasks:
-- Full database backup
-- Archive log cleanup
-- User account review
-- Security audit
-
-Monthly Tasks:
-- Database health check
-- Capacity planning review
-- Performance optimization
-- Schema maintenance
-```
-
-#### 6.1.2 Application Maintenance
-```
-Routine Maintenance:
-- ClickOnce application updates
-- Configuration file updates
-- Report template updates
-- User control updates
-
-Scheduled Maintenance:
-- PowerBuilder library updates
-- WCF service updates
-- Web application updates
-- Database schema updates
-```
-
-#### 6.1.3 Infrastructure Maintenance
-```
-Server Maintenance:
-- Operating system updates
-- Security patch management
-- Hardware monitoring
-- Network maintenance
-
-Application Server:
-- IIS configuration updates
-- SSL certificate renewal
-- Load balancer updates
-- Monitoring system maintenance
-```
-
-### 6.2 Backup and Recovery Procedures
-
-#### 6.2.1 Data Backup Strategy
-- **Database Backup**: Daily incremental, weekly full backup
-- **Application Backup**: Version-controlled deployments
-- **Configuration Backup**: XML configuration versioning
-- **Report Backup**: JRXML template versioning
-
-#### 6.2.2 Disaster Recovery Plan
-- **Recovery Time Objective (RTO)**: 4 hours maximum
-- **Recovery Point Objective (RPO)**: 1 hour maximum data loss
-- **Backup Sites**: Multiple geographic locations
-- **Testing Schedule**: Monthly disaster recovery tests
-
-### 6.3 Performance Monitoring
-
-#### 6.3.1 System Monitoring Points
-- **Database Performance**: Query response times, connection pools
-- **Application Performance**: Response times, error rates
-- **Network Performance**: Bandwidth utilization, latency
-- **Hardware Performance**: CPU, memory, disk utilization
-
-#### 6.3.2 Monitoring Tools and Alerts
-- **Database Monitoring**: Oracle Enterprise Manager
-- **Application Monitoring**: Custom logging and alerting
-- **Network Monitoring**: SNMP-based monitoring
-- **System Alerts**: Email and SMS notification system
-
-## 7. จุดเด่น MCC ที่แตกต่างจากสหกรณ์ทั่วไป
-
-### 7.1 ความเชี่ยวชาญด้าน HR Management ⭐⭐⭐
-
-#### 7.1.1 HR System Completeness
-- **ขนาดระบบ**: มากที่สุดใน MCC (1,152 files)
-- **ฟังก์ชันครบถ้วน**: จาก recruitment ถึง retirement
-- **Integration**: เชื่อมต่อกับทุกระบบในองค์กร
-- **Automation**: ระบบอัตโนมัติสำหรับ HR processes
-
-#### 7.1.2 Advanced HR Features
-- **Performance Management**: ระบบประเมินผลงานแบบ 360 องศา
-- **Learning Management**: ระบบพัฒนาบุคลากรและฝึกอบรม
-- **Payroll Integration**: เชื่อมต่อกับระบบเงินเดือนและสวัสดิการ
-- **Compliance Management**: ระบบตรวจสอบและ audit HR
-
-### 7.2 Document Management Excellence (RDC) ⭐⭐⭐
-
-#### 7.2.1 Digital Transformation Leadership
-- **Paperless Office**: ระบบจัดการเอกสารดิจิทัลครบวงจร
-- **Workflow Automation**: ระบบ approval และ routing อัตโนมัติ
-- **Version Control**: การจัดการ version เอกสารแบบมืออาชีพ
-- **Digital Signature**: ระบบลายเซ็นดิจิทัลที่ถูกกฎหมาย
-
-#### 7.2.2 Document Management Innovation
-- **AI Integration**: ระบบ OCR และ document classification
-- **Mobile Access**: เข้าถึงเอกสารผ่าน mobile applications
-- **Cloud Integration**: บริการ cloud storage และ sync
-- **Security Features**: encryption และ access control ขั้นสูง
-
-### 7.3 Comprehensive Welfare System ⭐⭐
-
-#### 7.3.1 Member Care Excellence
-- **Holistic Approach**: ดูแลสมาชิกทุกด้านของชีวิต
-- **Proactive Services**: ระบบแจ้งเตือนและติดตาม
-- **Integration**: เชื่อมต่อกับ insurance และ healthcare
-- **Family Support**: ดูแลครอบครัวสมาชิกแบบครบครัว
-
-#### 7.3.2 Welfare Innovation
-- **Health Management**: ระบบจัดการสุขภาพและตรวจสุขภาพ
-- **Education Support**: ทุนการศึกษาและโปรแกรมพัฒนา
-- **Emergency Assistance**: ระบบช่วยเหลือฉุกเฉินตลอด 24 ชั่วโมง
-- **Retirement Planning**: วางแผนเกษียณอายุและหลังเกษียณ
-
-### 7.4 Technology Leadership ⭐⭐
-
-#### 7.4.1 Architecture Excellence
-- **Multi-Layer Architecture**: สถาปัตยกรรมที่ทันสมัยและยืดหยุ่น
-- **Integration Maturity**: การเชื่อมต่อระบบขั้นสูง
-- **Scalability**: รองรับการเติบโตและขยายระบบ
-- **Security**: ความปลอดภัยระดับธนาคาร
-
-#### 7.4.2 Innovation Adoption
-- **Cloud Ready**: พร้อมสำหรับ cloud deployment
-- **Mobile Integration**: รองรับ mobile และ tablet
-- **API Framework**: ระบบ API สำหรับ integration
-- **Analytics**: ระบบรายงานและวิเคราะห์ข้อมูลขั้นสูง
-
-### 7.5 Operational Excellence ⭐⭐
-
-#### 7.5.1 Process Automation
-- **End-to-End Automation**: ระบบอัตโนมัติตั้งแต่ต้นจนจบ
-- **Batch Processing**: ประมวลผลแบทช์อัตโนมัติ
-- **Error Handling**: ระบบจัดการข้อผิดพลาดอัตโนมัติ
-- **Recovery Systems**: ระบบกู้คืนและ backup อัตโนมัติ
-
-#### 7.5.2 Quality Management
-- **Audit Trail**: ระบบติดตามและตรวจสอบครบถ้วน
-- **Performance Monitoring**: ตรวจสอบประสิทธิภาพระบบ
-- **Quality Assurance**: ระบบประกันคุณภาพแบบมาตรฐาน
-- **Continuous Improvement**: ปรับปรุงระบบอย่างต่อเนื่อง
-
-## Conclusion
-
-### MCC System Excellence Summary
-
-MCC (Member Credit Cooperative) ระบบสหกรณ์ออมทรัพย์ที่โดดเด่นด้วยความครอบคลุมและความเชี่ยวชาญในการบริหารจัดการแบบองค์กรสมัยใหม่ มีจุดแข็งหลัก 3 ด้าน:
-
-1. **HR Management Leadership** - ระบบบริหารทรัพยากรบุคคลที่ครบถ้วนและทันสมัย
-2. **Document Management Excellence** - ระบบจัดการเอกสารดิจิทัลขั้นสูง  
-3. **Comprehensive Welfare System** - ระบบสวัสดิการสมาชิกแบบครบวงจร
-
-### Technical Architecture Strengths
-
-- **Multi-Layer Integration**: Web → WCF → PowerBuilder → Oracle
-- **Deployment Excellence**: ClickOnce + Auto-update + Version control
-- **Thai Language Support**: เต็มรูปแบบทุกระดับของระบบ
-- **Security & Compliance**: ระดับธนาคารและตรงตามกฎหมาย
-
-### Business Impact
-
-MCC สร้างความแตกต่างจากสหกรณ์ทั่วไปด้วยการมุ่งเน้น:
-- **Employee Experience** ผ่านระบบ HR ขั้นสูง
-- **Digital Transformation** ผ่านระบบ RDC
-- **Member Care** ผ่านระบบสวัสดิการครบครัว
-- **Operational Excellence** ผ่านเทคโนโลยีและกระบวนการที่ทันสมัย
-
-ระบบ MCC เป็นตัวอย่างที่ดีของสหกรณ์ที่ใช้เทคโนโลยีเพื่อยกระดับการให้บริการและการบริหารจัดการให้เทียบเท่าองค์กรการเงินชั้นนำ
 
 ---
 
-**Analysis Completion:** Session 4 - MCC Integration Summary  
-**Total Analysis Coverage:** Web Layer + PowerBuilder + Infrastructure + Integration  
-**Key Focus:** MCC Business Characteristics และความเชี่ยวชาญเฉพาะ  
-**System Type:** Advanced Cooperative Management Platform
+## 5. เปรียบเทียบ MCC vs MHD
+
+### 5.1 ขนาดและไฟล์
+
+| มิติ | MCC | MHD | ต่าง |
+|---|---|---|---|
+| **Working copy** | 1.7 GB | ~1.5 GB | MCC +13% |
+| **GCOOP dir** | 343 MB | ~300 MB | MCC ใหญ่กว่า |
+| **Web files** | 6,721 (196 MB) | ~5,000 | MCC +26% |
+| **ASPX files** | 436 | ~350 | MCC +24% |
+| **Report templates (iReport)** | 676 jrxml (MCC dir) | ไม่ระบุ | MCC มีมากกว่า |
+| **CriteriaIReport** | 117 schemas | ไม่ระบุ | — |
+| **PB Core Libs (PBProcess)** | 11 libs (~54 MB) | 11 libs | **เหมือนกัน 100%** |
+| **PLSQL** | 39 .pls files | ~35 | MCC มากกว่า |
+
+### 5.2 Business Focus
+
+| ด้าน | MCC | MHD |
+|---|---|---|
+| **โมดูลใหญ่สุด** | HR — 81 ASPX | Loan — 33+ ASPX (วิเคราะห์ครบ) |
+| **จุดเน้น** | HR + RDC + Welfare + PM | Loan + Saving + Member |
+| **Document Management** | RDC (57 ASPX) — ครบวงจร | ไม่มี RDC module ระดับนี้ |
+| **Welfare** | walfare (33 ASPX) — holistic | พื้นฐาน |
+| **Portfolio Mgmt** | pm (21 ASPX) | ไม่มี/น้อยกว่า |
+| **Loan** | loan (38 ASPX) | loan เป็นหัวใจ |
+| **กลุ่มลูกค้า** | สหกรณ์ขนาดใหญ่ มีพนักงาน | สหกรณ์ออมทรัพย์มาตรฐาน |
+
+### 5.3 Technology Stack (เหมือนกัน)
+
+| Layer | MCC | MHD |
+|---|---|---|
+| Web Framework | ASP.NET WebForms 4.0 | เหมือนกัน |
+| Pattern | Frame.Master + PageWebSheet + JsPostBack | เหมือนกัน |
+| WCF Services | WcfService125/n_*.svc (BasicHttpBinding) | เหมือนกัน |
+| PowerBuilder | PBProcess 11 libs, iSavBOfc (PFC 10.5) | **เหมือนกัน** |
+| Database | Oracle, TH8TISASCII, System.Data.OracleClient | เหมือนกัน |
+| Report | iReport 5.0.4, .jrxml, Task Scheduler | เหมือนกัน |
+| Desktop Tools | winUPBOOK + winLKE (ClickOnce) | เหมือนกัน |
+
+### 5.4 ความแตกต่างหลัก
+
+**MCC-Specific features (ไม่มีใน MHD):**
+- `ws_mem_adjfamily_mcc.aspx` — จัดการครอบครัว MCC
+- `ws_kep_fileimport_mcc.aspx` — Import Keeping พร้อม dialog พิเศษ
+- `ws_acc_budget_setamt_mcc.aspx` — ตั้งงบประมาณ MCC
+- `u_cri_coopid_memno_loancont_refcollno_mcc` — iReport criteria MCC
+- CoopId logic: `003001` และ `074001` มี order_type = "3"
+- `n_cst_proc_slmnyret.of_postpayinslippx_mcc()` — MCC-specific batch function
+- `n_cst_proc_slmnyret.of_setlistcontnewlrtmcc()` — MCC-specific batch
+
+**Shared Core (ใช้ร่วม 85%+):**
+- WCF endpoints pattern (n_*.svc)
+- PBProcess LibList เหมือนกัน
+- Oracle PLSQL functions/packages
+- iReport engine (Java, Task Scheduler)
+- Deploy scripts (IIS 32-bit, ClickOnce)
+
+---
+
+## 6. Security Architecture
+
+### 6.1 Single Sign-On (SSO)
+
+```
+Web.config SSO Configuration:
+<authentication mode="Forms">
+  <forms loginUrl="http://sav.icoopthai.co/CEN/GCOOP/SingleSignOn/Login.aspx"
+         defaultUrl="http://sso.icoopthai.co/CEN/GCOOP/SingleSignOn/Default.aspx"
+         domain="icoopthai.co"/>
+</authentication>
+
+- Domain: icoopthai.co (shared cookie across subdomains)
+- Entry: sav.icoopthai.co — Login page
+- Default: sso.icoopthai.co — After login
+- sitePrefix: "CEN" (Mahidol University Saving and Credit Co-Operative)
+```
+
+### 6.2 Session และ Token Management
+
+```
+Frame.Master.cs Session Pattern:
+
+WebStateFactory state:
+├─ state.SsTokenId    — Token session สำหรับ lock
+├─ state.SsUsername   — Username
+├─ state.SsWorkDate   — Working date
+├─ state.SsCoopControl — CoopId ปัจจุบัน
+└─ state.SsCoopId     — สหกรณ์ที่ login
+
+FrameContext = "t={tokenId}&d={encryptedConnectionString}"
+└─ EncryptDecryptEngine.Encrypt(connectionString) — ส่ง URL parameter ทุกหน้า
+
+Token-based Member Locking:
+└─ WebUtil.UseMembUptoToken(state.SsTokenId, state.SsUsername, "")
+   └─ ล็อค member record ขณะเจ้าหน้าที่กำลังแก้ไข (ป้องกัน concurrent edit)
+```
+
+### 6.3 WCF Authentication
+
+```
+WCF Service Call:
+└─ wcf.NLoan.of_gennewcontractno(state.SsWsPass, req_coopid, loantype_code)
+   └─ state.SsWsPass — WCF password (ส่งทุก call)
+   └─ BasicHttpBinding — HTTP basic authentication
+
+WCF Endpoint: localhost/CORE/GCOOP/WcfService125/
+└─ ทำงานบน IIS Pool: MCC.wcf (v2.0, 32-bit)
+```
+
+### 6.4 Oracle Security
+
+```
+Oracle Profiles ตาม Environment:
+├─ iscorfd  — Main production read/write user
+├─ iscomrc  — MRC user
+├─ iscoaero — Aero cooperative user
+├─ iscobtg  — BTG branch user
+└─ iscocmt  — CMT user
+
+Kill Sessions Script (Alter_Oracle_Kill_Sessions_user_w3w.sql):
+└─ ตรวจหา INACTIVE session > 15 นาที ที่ใช้ w3wp.exe
+   └─ ALTER SYSTEM KILL SESSION ... IMMEDIATE
+   └─ รองรับ Amazon RDS: rdsadmin.rdsadmin_util.kill()
+
+SHA3 Encryption:
+├─ ENC.java — Java SHA3 implementation
+└─ FT_ENC.sql — Oracle PL/SQL function ใช้ encrypt ข้อมูลใน DB
+
+Java WcfCalling (Security concern):
+└─ WCFCALLING Oracle stored function → HTTP POST จาก Oracle
+   └─ ใช้สำหรับ Oracle trigger เรียก WCF Web Service
+```
+
+### 6.5 Connection String Encryption
+
+```
+URL parameter: d={encryptedConnectionString}
+└─ EncryptDecryptEngine.Encrypt() — encrypt connection string ก่อนส่ง URL
+└─ แต่ละหน้ารับ FrameContext และ decrypt เพื่อเชื่อมต่อ Oracle
+```
+
+### 6.6 Network Security
+
+```
+Internal Network:
+├─ WCF Services: localhost (internal IIS)
+├─ XMLConfig WCF: 192.168.253.181 (internal IP)
+├─ Passbook Stations: 192.168.99.15-28 (internal LAN)
+└─ Oracle: 192.168.10.200 (internal), 43.229.79.117 (cloud)
+
+SSH/SFTP (Renci.SshNet):
+└─ 316 .cs source files embedded — Private key & password authentication
+   └─ ใช้ transfer backup files (expdp .DMP) ไป backup server
+```
+
+---
+
+## 7. Maintenance และ Operations Guide
+
+### 7.1 Daily Operations
+
+```
+รายวัน (Automated):
+├─ [Batch] PBProcess: pccommon → pcdeposit → pcloan → pckeeping → pcfinance
+│   └─ n_cst_keeping_process.of_processloan() — process loan daily
+│   └─ n_cst_keeping_process.of_processloanocalint() — คำนวณดอกเบี้ย
+│   └─ n_cst_keeping_process.of_rcvprocess() — batch receive
+├─ [Report] Task Scheduler ทุก 1 นาที: runreport.bat → pbreport.exe
+│   └─ ล้าง: runreportdel.bat
+└─ [DB] ws_fin_closeday.aspx — ปิดวันบัญชีการเงิน
+
+รายวัน (Manual):
+├─ ตรวจสอบ Oracle session: Alter_Oracle_Kill_Sessions_user_w3w.sql
+│   └─ Kill INACTIVE session > 15 นาที (w3wp.exe)
+└─ ตรวจสอบ IIS Application Pool status
+```
+
+### 7.2 Monthly Operations
+
+```
+รายเดือน (Automated):
+├─ [Batch] ws_kep_process_keep.aspx + PBProcess:
+│   └─ proc_type 2-5: MemberGroup / MemberNo / Category / DebtAgent
+│   └─ RECEIVE_YEAR / RECEIVE_MONTH — ระบุงวด
+├─ [PBProcess] pcloan.pbl:
+│   └─ n_cst_proc_slmnyret.of_poststm_contract() — post loan statement
+│   └─ n_cst_proc_slmnyret.of_setlistcontnewlrtmcc() — MCC contract list
+├─ [HR] ws_hr_payroll_process.aspx:
+│   └─ ตรวจ post_status ใน hrpayroll + amworkcalendar
+└─ [Dividend] pcdivavg.pbl — คำนวณเฉลี่ยคืน/เงินปันผล
+```
+
+### 7.3 Oracle Database Maintenance
+
+```
+Backup (OracleSync2BackupServer.master.bat):
+1. Map network drive ไป backup server
+2. Clean tmp directory
+3. expdp export schema ISCOMCC → 43.229.79.117 (Cloud)
+4. MD5 checksum verification
+5. Optional: 7-zip compression (OracleSync2BackupServer.script.cloud_backup_7z.bat)
+
+PLImporter (Deploy Oracle PLSQL):
+1. PLImporter.exe reads PLImporter.config (connection string, PLSQL_Path)
+2. Drop all: Type → Package → Function → Procedure → Trigger
+3. Import from PLSQL/ directory (FUNCTIONS/17 + PACKAGES/14 + TYPES/8)
+4. Verify ด้วย Debug_mode = true
+
+Session Management:
+└─ Alter_Oracle_Kill_Sessions_user.xml (Task Scheduler) + .bat + .sql
+   └─ Schedule: kill inactive sessions อัตโนมัติ
+```
+
+### 7.4 Web Application Deployment
+
+```
+การ Build และ Deploy ใหม่:
+
+Step 1: Build (Build.bat):
+  wmic process where (name="Javaw.exe") delete  ← ปิด iReport ก่อน
+  NET STOP W3SVC                                 ← หยุด IIS
+  msbuild.exe GCOOP_MCC.sln /t:Clean
+  msbuild.exe Extend_Saving.csproj /t:rebuild
+  NET START W3SVC                                ← Start IIS
+
+Step 2: IIS Config (Deploy-IIS-Extend.v4.bat — ครั้งแรกหรือ reset):
+  - สร้าง App Pools: MCC.saving, MCC.wcf, MCC.report
+  - สร้าง Virtual Applications
+  - เพิ่ม MIME Types (.pbd, .trf)
+  - สร้าง PBSLIP_MCC directory
+
+Step 3: ClickOnce Update (winUPBOOK/winLKE):
+  - Publish ไปที่ pbUpbook/ folder ใน IIS
+  - เพิ่ม version ใน Application Files/
+  - Client จะ auto-update ครั้งต่อไปที่เปิด
+```
+
+### 7.5 Configuration Management (XMLConfig)
+
+```
+XMLConfig.exe (PowerBuilder admin tool):
+├─ server.connection_string.xml — เปลี่ยน DB profile
+├─ server.wcf_detail.xml       — เปลี่ยน WCF endpoint
+├─ print.formsets.xml          — กำหนด/เพิ่ม Passbook Printer stations
+├─ print.report.xml            — กำหนด PDF output path
+├─ d_ln_loan_type_*.xml (13 files) — กำหนด loan type attributes
+└─ xmlconf.constmap.xml        — ตั้งค่า PBSlip, Central Log
+
+ทุกไฟล์: UTF-16LE encoding
+```
+
+### 7.6 Data Migration (CONVERT_MCC)
+
+```
+เมื่อต้องการ migrate ข้อมูลจากระบบเดิม:
+
+1. SQL preparation (CONVERT_MCC/SQL Scripts):
+   └─ Delete Data.txt → ลบข้อมูลเดิมก่อน migrate
+   └─ Delete Table.sql → ลบตาราง (ถ้าจำเป็น)
+
+2. PowerBuilder Pipeline (mcc_pipeline/):
+   └─ mcc_pipe_member.pbl  → migrate สมาชิก
+   └─ mcc_pipe_dep.pbl     → migrate บัญชีเงินฝาก
+   └─ mcc_pipe_shrlon.pbl  → migrate หุ้น/เงินกู้
+   └─ mcc_pipe_keeping.pbl → migrate ออมทรัพย์พิเศษ
+   └─ mcc_pipe_insurance.pbl → migrate ประกัน
+   └─ mcc_pipe_divavg.pbl  → migrate เงินปันผล
+
+3. Post-migration SQL (SQL Update หลัง CNV.txt):
+   └─ Update lastcalint_date ใน dpdeptprncfixed
+   └─ Update ประเภทบัญชี 005, 015, 019, 002, 006, 028, 032-034 ฯลฯ
+
+4. Address conversion (cnv_addr/):
+   └─ cnvaddr.pbl + fmcomsv.pbl + fmsheet.pbl → convert ที่อยู่
+```
+
+### 7.7 iReport Template Management
+
+```
+iReport Templates (676 .jrxml):
+Path: C:\GCOOP_ALL\MCC\GCOOP\iReport\Reports\
+
+การเพิ่ม/แก้ไข template:
+├─ ใช้ iReport 5.0.4 (ห้ามใช้ version ใหม่กว่า)
+├─ DTD: iReport 5.0.4 standard เท่านั้น
+│   ✅ <pen lineWidth="0.5" lineStyle="Dashed"/>
+│   ❌ stroke="Dashed" (JasperReports 6.x+ syntax)
+├─ UUID: 36-character GUID format เสมอ
+└─ หลัง deploy: Task Scheduler จะ execute รายงานทันที (รอ ≤1 นาที)
+
+CriteriaIReport (117 schemas):
+Path: /GCOOP/Saving/CriteriaIReport/
+├─ .xsd — XML Schema Definition
+├─ .xsc — XmlSerializer cache
+└─ .xss — XmlSerializer schema
+
+MCC-specific criteria (3 ไฟล์):
+├─ u_cri_coopid_memno_loancont_refcollno_mcc
+├─ u_cri_coopid_memno_loancont_refcollno_mcc_resign
+└─ u_cri_coopid_period_memno_loancont_refcollno_mcc
+```
+
+### 7.8 ข้อควรระวัง (Known Issues)
+
+```
+1. 32-bit IIS constraint:
+   └─ System.Data.OracleClient เป็น 32-bit เท่านั้น
+   └─ library ทั้งหมดต้องเป็น x86-compatible
+   └─ ห้ามเปลี่ยน App Pool เป็น 64-bit
+
+2. Encoding:
+   └─ .cs/.aspx files: UTF-8 with BOM (UTF-8-sig)
+   └─ PowerBuilder Classic (.pbl/.pbt): Windows-874 (TH8TIS)
+   └─ XMLConfig XML files: UTF-16LE
+   └─ Oracle charset: TH8TISASCII (ไม่ใช่ UTF-8)
+
+3. Concurrent edit protection:
+   └─ UseMembUptoToken() ต้องปล่อย lock เมื่อ session หมด
+   └─ ถ้า lock ค้าง: kill Oracle session ที่เกี่ยวข้อง
+
+4. iReport Java process:
+   └─ Build.bat ต้อง kill Javaw.exe ก่อน build เสมอ
+   └─ Frame.Master.cs: WebUtil.StartIreportBuilder(true) เมื่อ r=1
+
+5. WCF HttpRuntime timeout:
+   └─ executionTimeout = 43200 วินาที (12 ชั่วโมง)
+   └─ ตั้งสูงสำหรับ batch processing — ปกติไม่ควร timeout
+
+6. Oracle session kill:
+   └─ สำหรับ Amazon RDS ใช้ rdsadmin.rdsadmin_util.kill() แทน ALTER SYSTEM
+```
+
+---
+
+## สรุปภาพรวมขั้นสุดท้าย
+
+ระบบ GCOOP MCC เป็นระบบสหกรณ์ออมทรัพย์ระดับองค์กรขนาดใหญ่ที่มีสถาปัตยกรรมหลายชั้น:
+
+| ชั้น | เทคโนโลยี | ขนาด | บทบาท |
+|---|---|---|---|
+| **Web** | ASP.NET 4.0, WebForms, AjaxPro | 436 ASPX, 24 modules | User interface, workflow |
+| **WCF** | BasicHttpBinding, .svc | 10 services | Business logic bridge |
+| **PowerBuilder** | PBProcess + iSavBOfc + PBReport | 11+26 libs, ~80 MB | Core business engine |
+| **Oracle** | System.Data.OracleClient, TH8TISASCII | 39 PLSQL, 10+ connections | Data persistence |
+| **iReport** | iReport 5.0.4, Task Scheduler | 676 jrxml | Report generation |
+| **Client Tools** | VB.NET + C# + ClickOnce | winUPBOOK + winLKE | Peripheral devices |
+
+ความแตกต่างสำคัญของ MCC คือ **ความสมบูรณ์ด้าน HR (81 หน้าจอ), RDC Document Management (57 หน้าจอ) และ Welfare (33 หน้าจอ)** ซึ่งทำให้ MCC เหมาะกับสหกรณ์ขนาดใหญ่ที่ต้องการบริหารองค์กรครบวงจร
+
+---
+
+*เอกสารนี้สร้างจากการสังเคราะห์ข้อมูลจาก Session 1-3 เท่านั้น ข้อมูลทั้งหมดตรวจสอบจาก source code และไฟล์ configuration จริงในระบบ*  
+*วันที่สร้าง: 2026-09-14*
