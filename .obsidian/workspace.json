@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "session-prompts/session-1-mcc-web-analysis.md",
+                "file": "concepts/gcoop-mcc-hr-rdc-welfare.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "session-1-mcc-web-analysis"
+              "title": "gcoop-mcc-hr-rdc-welfare"
             }
           }
         ]
@@ -191,6 +191,7 @@
   },
   "active": "7e93a6644171619d",
   "lastOpenFiles": [
+    "session-prompts/session-1-mcc-web-analysis.md",
     "test-auto-sync-check.md",
     "entities/gcoop-mcc.md",
     "entities/gcoop-mcc-web-system.md",
@@ -206,7 +207,6 @@
     "session-prompts/session-4-mcc-integration-summary.md",
     "SCHEMA.md",
     "log.md",
-    "session-prompts/session-1-mcc-web-analysis.md",
     "index.md",
     "session-prompts/session-3-mcc-infrastructure-analysis.md",
     "session-prompts/session-2-mcc-powerbuilder-analysis.md",
