@@ -6,7 +6,7 @@
 
 ## Entities (ระบบ/โมดูล)
 - [[gcoop-mcc]] — ระบบสหกรณ์ MCC ภาพรวม (1.7 GB, HR/RDC/Welfare เด่น, vs MHD)
-- [[gcoop-mcc-web-system]] — ระบบ Web MCC 23 โมดูล 6,721 ไฟล์ (ASP.NET)
+- [[gcoop-mcc-web-system]] — ระบบ Web MCC 24 โมดูล 436 ASPX (ASP.NET 4.0, 10 WCF, Oracle x86)
 - [[gcoop-mcc-powerbuilder]] — ระบบ PowerBuilder MCC 116 libs + iSavBOfc + Pipeline
 - [[gcoop-mcc-infrastructure]] — Infrastructure MCC (winUPBOOK/winLKE/PLSQL/iReport/XMLConfig)
 
@@ -18,7 +18,7 @@
 - [[gcoop-mcc-vs-mhd]] — เปรียบเทียบ MCC vs MHD (ขนาด, business focus, tech stack)
 
 ## Raw Sources
-- [[mcc-session1-web-analysis]] — Session 1: Web Interface Analysis (6,721 files, 23 modules)
+- [[mcc-session1-web-analysis]] — Session 1: Web Interface Analysis (436 ASPX, 24 modules, WCF+Oracle+iReport, MCC-specific features)
 - [[mcc-session2-powerbuilder-analysis]] — Session 2: PowerBuilder Analysis (116 libs, 11 core)
 - [[mcc-session3-infrastructure-analysis]] — Session 3: Infrastructure Tools (ClickOnce, PLSQL, iReport)
 - [[mcc-session4-integration-summary]] — Session 4: Integration Summary (architecture, deployment, welfare)
