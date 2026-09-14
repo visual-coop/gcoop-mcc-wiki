@@ -1,145 +1,176 @@
 # MCC Session 1: Web Interface Analysis
 
-## Overview
-การวิเคราะห์ Web Interface ของระบบ MCC (Member Credit Cooperative) ใน GCOOP project ที่ทำหน้าที่เป็นระบบจัดการสินเชื่อสมาชิกสหกรณ์
+**วันที่วิเคราะห์:** 2026-09-14  
+**โปรเจค:** MCC (Member Credit Cooperative) System  
+**Path:** `/root/gcoop_hermes/mcc/`  
+**Focus:** ระบบสหกรณ์ออมทรัพย์ MCC เฉพาะ
 
-## Main Web Structure
+---
 
-### 1. Entry Point และ Application Selection
-- **ApplicationSelectionPage.aspx** - หน้าหลักเลือกระบบ
-  - ใช้ Master Page Framework 
-  - มีการจัดการ Application Icons แบบ Grid Layout
-  - รองรับการเลือกระบบย่อยต่างๆ (Saving, Loan, Member Management)
+## Executive Summary
 
-### 2. Master Pages Framework
-- **Frame.Master** - Layout หลักของระบบ
-  - TopBar Control (ส่วนหัวระบบ)
-  - MenuBar Control (เมนูหลัก)
-  - MenuSub Control (เมนูย่อย)
-  - DatePicker Control (การเลือกวันที่)
-  - รองรับ JavaScript Framework สำหรับ UI Interactions
+การวิเคราะห์ Web Interface ของระบบ MCC (Member Credit Cooperative) ซึ่งเป็นระบบสหกรณ์ออมทรัพย์ที่มีขนาดใหญ่และครอบคลุม โดยมีความโดดเด่นด้าน HR, RDC (Document Management), และ Welfare Systems ที่แตกต่างจากสหกรณ์อื่น
 
-### 3. Core Application Modules
+## 1. MCC Project Structure Overview
 
-#### 3.1 Member & Share Management (mbshr)
-**MCC-Specific Screens:**
-- `ws_mem_adjfamily_mcc.aspx` - ปรับปรุงข้อมูลครอบครัวสมาชิก MCC
-  - Form controls สำหรับข้อมูลส่วนตัวและครอบครัว
-  - Validation และ Search functionality
-  - Address และ Contact information management
+### 1.1 โครงสร้างหลัก
+**Base Path:** `/root/gcoop_hermes/mcc/`
 
-**Main Member Screens:**
-- `ws_mem_memberdetail.aspx` - รายละเอียดสมาชิก
-- `ws_mem_reqappl_gain.aspx` - คำขอรับสมาชิก
-- `ws_mem_apvappl.aspx` - อนุมัติสมาชิกใหม่
-- `ws_mem_reqresign.aspx` - คำขอลาออก
-- `ws_shr_withdraw.aspx` - เบิกหุ้น
+| Directory | Files | Subdirs | Size | Purpose |
+|-----------|-------|---------|------|---------|
+| **GCOOP** | 3 | 7 | 343M | Web Application Framework |
+| **iSavBOfc** | 223 | 7 | 192M | PowerBuilder Banking Core |
+| **winLKE** | 1 | 2 | 67M | Magnetic Card Reader |
+| **winUPBOOK** | 8 | 5 | 96M | Passbook Update Tool |
+| **CONVERT_MCC** | 18 | 2 | 4.7M | Data Migration Tools |
 
-#### 3.2 Loan Management (loan)
-**Core Loan Processing Screens:**
-- `ws_lon_reqloan.aspx` - คำขอสินเชื่อ
-- `ws_lon_apvloan.aspx` - อนุมัติสินเชื่อ  
-- `ws_lon_rcvloan.aspx` - รับเงินกู้
-- `ws_lon_payment.aspx` - ชำระหนี้สินเชื่อ
-- `ws_lon_estpayment.aspx` - ประมาณการชำระหนี้
+### 1.2 GCOOP Web Application Components
+**Path:** `/root/gcoop_hermes/mcc/GCOOP/`
 
-**Loan Administration:**
-- `ws_lon_cfloantype.aspx` - กำหนดประเภทสินเชื่อ
-- `ws_lon_cfintrate.aspx` - กำหนดอัตราดอกเบิ้ย
-- `ws_lon_collateral_master.aspx` - จัดการหลักประกัน
-- `ws_lon_collateral_car.aspx` - หลักประกันรถยนต์
+| Component | Files | Size | Description |
+|-----------|-------|------|-------------|
+| **Saving** | 6,721 | 196M | Main Web Application (ASP.NET) |
+| **PBProcess** | 26 | 68M | PowerBuilder Batch Processing |
+| **iReport** | 1,345 | 59M | Report Generation System |
+| **PBReport125** | 20 | 16M | iReport 5.0.4 Reporting |
+| **XMLConfig** | 40 | 3.7M | System Configuration Files |
+| **PLSQL** | 42 | 312K | Oracle Database Scripts |
+| **Renci.SshNet** | 316 | 2.7M | SSH.NET Library |
 
-#### 3.3 Borrowing Management (brw) 
-**Payment Management:**
-- `ws_pm_loan_payment.aspx` - การชำระเงินกู้
-- `ws_pm_loan_agreement.aspx` - สัญญาเงินกู้
-- `ws_pm_requestloan.aspx` - คำขอเงินกู้
+## 2. MCC Web Applications Analysis
 
-#### 3.4 Account Management (account)
-**MCC-Specific:**
-- `ws_acc_budget_setamt_mcc.aspx` - กำหนดจำนวนงบประมาณ MCC
+### 2.1 Application Modules Statistics
+**Path:** `/root/gcoop_hermes/mcc/GCOOP/Saving/Applications/`
 
-### 4. Report Criteria Screens
-**MCC-Specific Report Criteria:**
-- `u_cri_coopid_memno_loancont_refcollno_mcc.aspx` - เกณฑ์รายงานสัญญาเงินกู้ MCC
-- `uc_coopid_rdate_hp_disb_mcc.aspx` - เกณฑ์รายงานเบิกจ่าย MCC
-- `u_cri_coopid_rdate_rmembgroup_status_mcc.aspx` - เกณฑ์รายงานสถานะกลุ่มสมาชิก MCC
-- `uc_coopid_rdate_loandisbursement_bank_mcc.aspx` - เกณฑ์รายงานเบิกจ่ายผ่านธนาคาร MCC
-- `uc_lc_rdate_rloantype_mcc.aspx` - เกณฑ์รายงานประเภทสินเชื่อ MCC
+| Module | ASPX Files | C# Files | Total Files | Primary Function |
+|--------|------------|----------|-------------|------------------|
+| **hr** | 81 | 648 | 1,152 | Human Resources Management |
+| **rdc** | 57 | 392 | 748 | Document Management System |
+| **loan** | 38 | 404 | 688 | สินเชื่อและเงินกู้ |
+| **mbshr** | 35 | 356 | 616 | สมาชิกและหุ้น |
+| **walfare** | 33 | 241 | 441 | ระบบสวัสดิการ |
+| **finance** | 23 | 153 | 284 | การเงินและบัญชี |
+| **pm** | 21 | 165 | 256 | Project Management |
+| **brw** | 19 | 118 | 185 | Borrowing System |
+| **durinvt** | 18 | 133 | 221 | Duration Investment |
+| **ixp** | 12 | 57 | 108 | Import/Export Processing |
+| **assist** | 11 | 120 | 207 | Member Assistance |
+| **insurance** | 9 | 66 | 118 | ประกันภัย |
+| **keeping** | 7 | 52 | 91 | เงินฝากออมทรัพย์ |
+| **investment** | 6 | 68 | 117 | การลงทุน |
 
-### 5. Supporting Modules
+### 2.2 MCC-Specific Key Features
 
-#### 5.1 Document Management (rdc)
-- `ws_rdc_documentreceive.aspx` - รับเอกสาร
-- `ws_rdc_documentsend.aspx` - ส่งเอกสาร
-- `ws_rdc_documentsafe.aspx` - เก็บรักษาเอกสาร
+#### 2.2.1 MCC-Specific Screens
+ระบบมีหน้าจอเฉพาะสำหรับ MCC ที่แตกต่างจากสหกรณ์อื่น:
 
-#### 5.2 HR Management (hr)
-- `ws_hr_master.aspx` - ข้อมูลพนักงาน
-- `ws_hr_overtime_new.aspx` - การทำงานล่วงเวลา
-- `ws_hr_bonus_board.aspx` - โบนัสกรรมการ
+1. **ws_mem_adjfamily_mcc.aspx** - ปรับปรุงข้อมูลครอบครัวสมาชิก MCC
+   - Path: `mbshr/ws_mem_adjfamily_mcc_ctrl/`
+   - Features: Family member management with MCC-specific validation
+   - JavaScript validation for relation codes
 
-#### 5.3 Duration Investment (durinvt)
-- `ws_dur_durtmaster.aspx` - ข้อมูลหลักการลงทุนระยะยาว
-- `ws_invt_invtmaster.aspx` - ข้อมูลหลักการลงทุน
+2. **ws_acc_budget_setamt_mcc.aspx** - การตั้งงบประมาณ MCC
+   - Path: `account/ws_acc_budget_setamt_mcc_ctrl/`  
+   - Features: MCC budget management
 
-## Technical Architecture
+3. **ws_kep_fileimport_mcc.aspx** - นำเข้าไฟล์ข้อมูล MCC
+   - Path: `ixp/ws_kep_fileimport_mcc_ctrl/`
+   - Features: MCC-specific data import functionality
 
-### Frontend Technology Stack
-- **ASP.NET Web Forms** with Master Pages
-- **JavaScript/jQuery** สำหรับ client-side interactions
-- **CSS** สำหรับ styling และ layout
-- **Custom Controls** (.ascx) สำหรับ reusable components
+#### 2.2.2 MCC Distinctive Modules
 
-### Control Patterns
-1. **DataSource Controls** - การจัดการข้อมูล
-2. **FormView Controls** - การแสดงฟอร์มข้อมูล  
-3. **Repeater Controls** - การแสดงรายการข้อมูล
-4. **Custom User Controls** - components ที่ใช้ร่วมกัน
+**HR Module (ขนาดใหญ่ที่สุด):**
+- 81 ASPX files, 648 C# files
+- ระบบบริหารทรัพยากรบุคคลครบถ้วน
+- แสดงให้เห็นว่า MCC มีฟังก์ชัน HR ที่ซับซ้อน
 
-### JavaScript Framework
-- **DataSourceTool.js** - การจัดการข้อมูล client-side
-- **DatePicker.js** - การเลือกวันที่
-- **JsScriptFrame.js** - ฟังก์ชันพื้นฐานของระบบ
-- **CallPlsql.js** - การเรียกใช้ stored procedures
+**RDC Module (Document Management):**
+- 57 ASPX files, 392 C# files  
+- ระบบจัดการเอกสารแบบครบวงจร
+- เป็นจุดเด่นของ MCC ที่แตกต่างจากสหกรณ์ทั่วไป
 
-## MCC-Specific Features
+**Welfare Module:**
+- 33 ASPX files, 241 C# files
+- ระบบสวัสดิการสมาชิกขยาย
+- แสดงการมุ่งเน้นสวัสดิการสมาชิก
 
-### 1. Member Credit Functions
-- การจัดการข้อมูลสมาชิก MCC แยกต่างหากจากระบบทั่วไป
-- ระบบรายงานเฉพาะสำหรับ MCC
-- การจัดการงบประมาณเฉพาะ MCC
+## 3. Technology Architecture
 
-### 2. Specialized Reports  
-- รายงานเบิกจ่ายแยกตาม MCC
-- รายงานสถานะสมาชิกกลุ่ม MCC
-- รายงานการจัดการสินเชื่อเฉพาะ MCC
+### 3.1 Web Framework
+- **ASP.NET Web Forms** with Master Pages (`Frame.Master`)
+- **C# CodeBehind** สำหรับ Business Logic  
+- **User Controls** (.ascx) สำหรับ Reusable Components
+- **DataSet/DataSource** Architecture
 
-### 3. Integration Points
-- เชื่อมต่อกับระบบธนาคารสำหรับการเบิกจ่าย
-- ระบบการจัดการเอกสารสำหรับ MCC
-- การส่งออกข้อมูลผ่าน File Import/Export
+### 3.2 Key Technical Components
+```
+MCC Web Application Structure:
+├── Frame.Master (Master Page Framework)
+├── Applications/ (Business Modules)
+│   ├── mbshr/ (Member & Share Management)
+│   ├── loan/ (Loan Processing)  
+│   ├── hr/ (Human Resources - MCC Strength)
+│   ├── rdc/ (Document Management - MCC Unique)
+│   └── welfare/ (Welfare System - MCC Focus)
+├── Controls/ (Shared UI Components)
+└── Configuration/ (XML Config Files)
+```
 
-## Navigation และ User Experience
+### 3.3 Database Integration
+- **Oracle Database** backend
+- **PLSQL** stored procedures (42 files)
+- **ADO.NET DataSet** patterns
+- **XML Configuration** for connection strings
 
-### Menu Structure
-1. **Top Level**: Application Selection
-2. **Module Level**: ตามหน้าที่งาน (Member, Loan, Account, etc.)
-3. **Function Level**: งานเฉพาะใน module นั้นๆ
+## 4. MCC Business Characteristics
 
-### Common UI Patterns
-- **Search และ Selection**: ปุ่ม "..." สำหรับค้นหา
-- **Data Entry Forms**: Layout แบบ table-based
-- **Validation**: JavaScript client-side validation
-- **Navigation**: Master-Detail relationships
+### 4.1 MCC ความโดดเด่น
+1. **HR-Focused Cooperative** - มี HR module ขนาดใหญ่ที่สุด
+2. **Document Management Excellence** - RDC system ครบถ้วน  
+3. **Comprehensive Welfare** - ระบบสวัสดิการขยาย
+4. **Project Management** - มี PM module สำหรับบริหารโครงการ
 
-## Comparison กับ MHD System
-เนื่องจากระบบ MCC ใช้โครงสร้างคล้ายคลึงกับ MHD แต่เน้นไปที่:
+### 4.2 ขนาดและความซับซ้อน
+- **Total Web Files:** 6,721 files (196MB)
+- **Application Modules:** 23 active modules
+- **Database Scripts:** 42 PLSQL files
+- **Reports:** 1,345 report templates
 
-1. **Member Credit Management** แทน Medical/Health Data
-2. **Financial Transactions** แทน Medical Records  
-3. **Cooperative Banking** แทน Healthcare Operations
-4. **Loan Processing** เป็น core function หลัก
+### 4.3 เปรียบเทียบกับสหกรณ์ทั่วไป
+MCC มีความครบถ้วนสูงกว่าสหกรณ์ธรรมดา:
+- **HR Management** เป็นจุดแข็งหลัก
+- **Document Management** ระบบจัดการเอกสารที่ทันสมัย  
+- **Welfare Systems** ครอบคลุมสวัสดิการสมาชิก
+- **Project Management** สำหรับบริหารโครงการขนาดใหญ่
 
-## สรุป
-ระบบ MCC Web Interface เป็นระบบจัดการสินเชื่อสมาชิกสหกรณ์ที่ครอบคลุม โดยมี web screens หลักในการจัดการสมาชิก การให้สินเชื่อ การชำระหนี้ และการรายงาน พร้อมด้วยระบบรายงานเฉพาะสำหรับ MCC และการเชื่อมต่อกับระบบภายนอก
+## 5. Technical Observations
+
+### 5.1 Code Structure
+- มีไฟล์เฉพาะ MCC (`*_mcc.aspx`) แยกจาก templates มาตรฐาน
+- ใช้ User Control pattern อย่างเป็นระบบ (DsMain.ascx, DsList.ascx)  
+- JavaScript validation ใน client-side
+- ADO.NET DataSet architecture
+
+### 5.2 Integration Points
+- **PowerBuilder Integration** ผ่าน PBProcess modules
+- **Report Integration** ผ่าน iReport 5.0.4
+- **Database Integration** ผ่าน Oracle PLSQL packages
+- **File Management** ผ่าน import/export systems
+
+## 6. Conclusion
+
+MCC (Member Credit Cooperative) เป็นระบบสหกรณ์ออมทรัพย์ที่มีความครอบคลุมสูง โดยเฉพาะด้าน HR Management, Document Management, และ Welfare Systems ซึ่งแตกต่างจากสหกรณ์ทั่วไปที่มุ่งเน้นเฉพาะสินเชื่อและเงินฝาก
+
+**จุดแข็งของ MCC:**
+- ระบบ HR ครบถ้วนและซับซ้อน (81 หน้าจอ)
+- Document Management ที่ทันสมัย (RDC)  
+- Welfare System ที่ครอบคลุม
+- Project Management capabilities
+
+ระบบนี้เหมาะสำหรับสหกรณ์ขนาดใหญ่ที่ต้องการการบริหารจัดการแบบองค์กรสมัยใหม่ ไม่เพียงแค่การเงินเบื้องต้น
+
+---
+**Analysis Date:** 2026-09-14  
+**Total Files Analyzed:** 6,721+ web files  
+**System Type:** Comprehensive Cooperative Management  
+**Technical Focus:** ASP.NET + Oracle + PowerBuilder Integration
