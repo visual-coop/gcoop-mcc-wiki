@@ -1,24 +1,24 @@
 {
   "main": {
-    "id": "f8135d4d6ec483f3",
+    "id": "0174fbe9ab26561e",
     "type": "split",
     "children": [
       {
-        "id": "799d7ba82dfa5a6c",
+        "id": "9571dbc2beed17a0",
         "type": "tabs",
         "children": [
           {
-            "id": "1c209f32c98a1a78",
+            "id": "7e93a6644171619d",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "SCHEMA.md",
-                "mode": "preview",
+                "file": "session-prompts/session-4-mcc-integration-summary.md",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "SCHEMA"
+              "title": "session-4-mcc-integration-summary"
             }
           }
         ]
@@ -27,15 +27,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "c8328ed53064ed7f",
+    "id": "f2bf166a7f1b5ebe",
     "type": "split",
     "children": [
       {
-        "id": "8d8386c24c048558",
+        "id": "9b423bb318365e4b",
         "type": "tabs",
         "children": [
           {
-            "id": "6b9c96a5b3b2807d",
+            "id": "e8da88f75f3d9a91",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -50,12 +50,12 @@
             }
           },
           {
-            "id": "dfa4a6b7a85365ae",
+            "id": "9ee13dc391733aea",
             "type": "leaf",
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "mhd",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -67,7 +67,7 @@
             }
           },
           {
-            "id": "eecd11086686a302",
+            "id": "9a4e5cfb415fb4d9",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -86,20 +86,20 @@
     "width": 300
   },
   "right": {
-    "id": "f5b23ade8e245bca",
+    "id": "3061f4c95a111be8",
     "type": "split",
     "children": [
       {
-        "id": "8200c877849cf35a",
+        "id": "b03441b808804e38",
         "type": "tabs",
         "children": [
           {
-            "id": "0347061c59309842",
+            "id": "01a5c3feeb1c5e34",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "raw/documents/core-loancollservice-cs.md",
+                "file": "mcc-loan-batch-plan.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -113,12 +113,12 @@
             }
           },
           {
-            "id": "9a5edd7d03b5dc83",
+            "id": "81193783c72ebc7d",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "raw/documents/core-loancollservice-cs.md",
+                "file": "mcc-loan-batch-plan.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -127,7 +127,7 @@
             }
           },
           {
-            "id": "cd76d9961714abd7",
+            "id": "15b0b345ed82057f",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -142,7 +142,7 @@
             }
           },
           {
-            "id": "7b68c374571bea33",
+            "id": "3f2ea4e207241fcb",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -156,12 +156,12 @@
             }
           },
           {
-            "id": "b270565bc3578ea7",
+            "id": "9db56624ec35c544",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "raw/documents/core-loancollservice-cs.md",
+                "file": "mcc-loan-batch-plan.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -179,44 +179,51 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "obsidian-git:Open Git source control": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "obsidian-git:Open Git source control": false
     }
   },
-  "active": "1c209f32c98a1a78",
+  "active": "7e93a6644171619d",
   "lastOpenFiles": [
-    "log.md",
-    "index.md",
     "SCHEMA.md",
-    "queries/ระบบสินเชื่อ_Analysis_20260908.md",
-    "queries/loan-analysis-group6-process.md",
-    "queries/loan-analysis-group5-collateral.md",
-    "queries/loan-analysis-group4-payment.md",
-    "queries/loan-analysis-group3-disbursement.md",
-    "queries/loan-analysis-group2-approval.md",
-    "queries/loan-analysis-group1-request.md",
+    "log.md",
+    "session-prompts/session-1-mcc-web-analysis.md",
+    "index.md",
+    "session-prompts/session-4-mcc-integration-summary.md",
+    "session-prompts/session-3-mcc-infrastructure-analysis.md",
+    "session-prompts/session-2-mcc-powerbuilder-analysis.md",
+    "raw/documents/mcc-session2-powerbuilder-analysis.md",
+    "session-prompts/session-1-mhd-system-prompt.md",
+    "session-prompts/session-4-integration-analysis-prompt.md",
+    "raw/documents/mcc-session1-web-analysis.md",
+    "session-prompts/session-1-mcc-system-prompt.md",
+    "session-prompts/session-2-pbprocess-prompt.md",
+    "raw/documents/mcc-session2-pb-analysis.md",
+    "raw/documents/mcc-session3-infrastructure-analysis.md",
+    "raw/documents/mcc-session4-integration-summary.md",
+    "session-prompts/session-3-core-infrastructure-prompt.md",
+    "session-prompts/README.md",
+    "session-prompts",
+    "raw/documents",
+    "raw",
+    "queries/ระบบสินเชื่อ_Analysis_20260908.html",
+    "queries",
+    "mcc-loan-batch-plan.md",
+    "entities/gcoop-mcc-loan-system.md",
+    "raw/documents/screen-analysis-template.md",
+    "raw/documents/rules-gcoop-analysis.md",
     "concepts/gcoop-screen-analysis-methodology.md",
-    "concepts/gcoop-loan-collateral.md",
-    "concepts/gcoop-interest-calculation.md",
-    "raw/documents/วิเคราะห์ทีละหน้าจอ-mhd.loan.md",
-    "raw/documents/วิเคราะห์ทุกหน้าจอ-mhd.loan.md",
-    "raw/documents/gcoop-pbprocess-systems.md",
-    "raw/documents/core-pb-interest-service.md",
-    "raw/documents/critical-mcc-chat-summary-20260909.md",
-    "raw/documents/mhd-screen-analysis-template.md",
-    "raw/documents/mhd-plsql-n-pk-lnnpl.md",
-    "raw/documents/core-smartcard-simulator.md",
-    "raw/documents/core-oracle-datapump-studio.md",
-    "raw/documents/core-loanservice-cs.md",
-    "raw/documents/core-loancollservice-cs.md",
-    "entities/gcoop-smartcard-system.md",
-    "entities/gcoop-pbprocess-systems.md",
-    "queries/ระบบสินเชื่อ_Analysis_20260908.html"
+    "raw/documents/วิเคราะห์ทุกหน้าจอ-mcc.loan.md",
+    "raw/documents/วิเคราะห์ทีละหน้าจอ-mcc.loan.md",
+    "entities/gcoop-mcc.md",
+    "comparisons",
+    "concepts",
+    "entities"
   ]
 }
