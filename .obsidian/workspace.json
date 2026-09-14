@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "session-prompts/session-4-mcc-integration-summary.md",
+                "file": "session-prompts/session-1-mcc-web-analysis.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "session-4-mcc-integration-summary"
+              "title": "session-1-mcc-web-analysis"
             }
           }
         ]
@@ -191,17 +191,17 @@
   },
   "active": "7e93a6644171619d",
   "lastOpenFiles": [
+    "raw/documents/mcc-session1-web-analysis.md",
+    "session-prompts/session-4-mcc-integration-summary.md",
     "SCHEMA.md",
     "log.md",
     "session-prompts/session-1-mcc-web-analysis.md",
     "index.md",
-    "session-prompts/session-4-mcc-integration-summary.md",
     "session-prompts/session-3-mcc-infrastructure-analysis.md",
     "session-prompts/session-2-mcc-powerbuilder-analysis.md",
     "raw/documents/mcc-session2-powerbuilder-analysis.md",
     "session-prompts/session-1-mhd-system-prompt.md",
     "session-prompts/session-4-integration-analysis-prompt.md",
-    "raw/documents/mcc-session1-web-analysis.md",
     "session-prompts/session-1-mcc-system-prompt.md",
     "session-prompts/session-2-pbprocess-prompt.md",
     "raw/documents/mcc-session2-pb-analysis.md",
