@@ -191,6 +191,17 @@
   },
   "active": "7e93a6644171619d",
   "lastOpenFiles": [
+    "test-auto-sync-check.md",
+    "entities/gcoop-mcc.md",
+    "entities/gcoop-mcc-web-system.md",
+    "entities/gcoop-mcc-powerbuilder.md",
+    "entities/gcoop-mcc-infrastructure.md",
+    "entities",
+    "concepts/gcoop-mcc-integration-architecture.md",
+    "concepts/gcoop-mcc-hr-rdc-welfare.md",
+    "concepts",
+    "comparisons/gcoop-mcc-vs-mhd.md",
+    "comparisons",
     "raw/documents/mcc-session1-web-analysis.md",
     "session-prompts/session-4-mcc-integration-summary.md",
     "SCHEMA.md",
@@ -213,17 +224,6 @@
     "raw/documents",
     "raw",
     "queries/ระบบสินเชื่อ_Analysis_20260908.html",
-    "queries",
-    "mcc-loan-batch-plan.md",
-    "entities/gcoop-mcc-loan-system.md",
-    "raw/documents/screen-analysis-template.md",
-    "raw/documents/rules-gcoop-analysis.md",
-    "concepts/gcoop-screen-analysis-methodology.md",
-    "raw/documents/วิเคราะห์ทุกหน้าจอ-mcc.loan.md",
-    "raw/documents/วิเคราะห์ทีละหน้าจอ-mcc.loan.md",
-    "entities/gcoop-mcc.md",
-    "comparisons",
-    "concepts",
-    "entities"
+    "queries"
   ]
 }
