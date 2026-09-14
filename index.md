@@ -1,54 +1,24 @@
-# GCOOP MCC System Wiki
+# Wiki Index — GCOOP MCC
 
-## Overview
+> Content catalog. ทุก wiki page listed พร้อม one-line summary
+> อ่านไฟล์นี้ก่อนเสมอเพื่อหา pages ที่เกี่ยวข้อง
+> Last updated: 2026-09-14 | Total pages: 11
 
-Knowledge base for **MCC (Member Credit Cooperative)** system - สหกรณ์ออมทรัพย์ MCC ที่ใช้ระบบ GCOOP
+## Entities (ระบบ/โมดูล)
+- [[gcoop-mcc]] — ระบบสหกรณ์ MCC ภาพรวม (1.7 GB, HR/RDC/Welfare เด่น, vs MHD)
+- [[gcoop-mcc-web-system]] — ระบบ Web MCC 23 โมดูล 6,721 ไฟล์ (ASP.NET)
+- [[gcoop-mcc-powerbuilder]] — ระบบ PowerBuilder MCC 116 libs + iSavBOfc + Pipeline
+- [[gcoop-mcc-infrastructure]] — Infrastructure MCC (winUPBOOK/winLKE/PLSQL/iReport/XMLConfig)
 
-**Project Location:** `/root/gcoop_hermes/mcc/`  
-**Wiki Location:** `/root/gcoop_hermes/gcoop-mcc-wiki/`  
-**System Type:** สหกรณ์ออมทรัพย์และสินเชื่อสมาชิก
+## Concepts
+- [[gcoop-mcc-hr-rdc-welfare]] — HR/RDC/Welfare จุดเด่นธุรกิจ MCC (2,341 ไฟล์)
+- [[gcoop-mcc-integration-architecture]] — สถาปัตยกรรม Integration MCC (Web→WCF→PB→Oracle)
 
-## System Architecture
+## Comparisons
+- [[gcoop-mcc-vs-mhd]] — เปรียบเทียบ MCC vs MHD (ขนาด, business focus, tech stack)
 
-- **SVN Repository:** http://svn.coopsiam.com:8080/svnGCOOPCORE/mcc
-- **Current Revision:** 1997 (Latest checkout 2026-09-14)
-- **Size:** 1.7GB working copy
-- **Technologies:** C#.NET (ASP.NET + WCF), PowerBuilder, Oracle Database
-
-## Analysis Complete ✅
-
-### MCC Analysis Sessions (All Complete):
-1. **✅ Session 1:** MCC Web Interface Analysis (7.9KB)
-2. **✅ Session 2:** MCC PowerBuilder Modules (10.2KB)  
-3. **✅ Session 3:** MCC Infrastructure Tools (15.3KB)
-4. **✅ Session 4:** MCC Integration Analysis (23.9KB)
-
-**Total Analysis:** 57.3KB comprehensive MCC documentation
-
-## System Components
-
-- **Web Application:** 177MB, 6,721 files - ASP.NET web interfaces
-- **PowerBuilder:** 67MB, 26 files - Batch processing modules
-- **Reports:** 56MB, 1,345 templates - iReport 5.0.4 reporting
-- **Infrastructure:** Various tools (iSavBOfc, winUPBOOK, winLKE)
-
-## Key Differences from MHD
-
-- **13% larger** than MHD cooperative (491MB vs 436MB)
-- **Comprehensive features:** Insurance, Welfare, Document Management  
-- **Modern approach:** 10 Oracle configs vs MHD's legacy focus
-- **PowerBuilder core identical** to MHD (100% match)
-
-## Integration with GCOOP
-
-- **Shared Infrastructure:** Core WCF services, Oracle database
-- **Same Technology Stack:** ASP.NET + PowerBuilder + Oracle
-- **Cross-compatible:** Can share services with MHD system
-- **85% architectural similarity** with MHD cooperative
-
----
-
-**Created:** 2026-09-14  
-**Last Updated:** 2026-09-14  
-**Status:** Complete analysis, separate wiki vault
-**Comparison:** See cooperative-comparison-analysis.md in MHD wiki
+## Raw Sources
+- [[mcc-session1-web-analysis]] — Session 1: Web Interface Analysis (6,721 files, 23 modules)
+- [[mcc-session2-powerbuilder-analysis]] — Session 2: PowerBuilder Analysis (116 libs, 11 core)
+- [[mcc-session3-infrastructure-analysis]] — Session 3: Infrastructure Tools (ClickOnce, PLSQL, iReport)
+- [[mcc-session4-integration-summary]] — Session 4: Integration Summary (architecture, deployment, welfare)
