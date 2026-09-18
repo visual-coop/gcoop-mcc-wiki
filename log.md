@@ -107,7 +107,9 @@
   - entities/gcoop-mcc-web-system.md — investment ASPX 6→7 (นับ `find *.aspx` ได้ 7)
   - entities/gcoop-mcc-infrastructure.md — jrxml 676→688 (นับจริง)
   - index.md — 15 pages
-- ไม่ ingest ไบนารี `.pbl/.pbd/.exe/.jasper`
+- ไม่ ingest ไบนารี `.pbd/.exe/.jasper` — **แกะ `.pbl` แล้ว** (dispatcher UTF-16LE)
+- Created เพิ่ม: entities/gcoop-mcc-pbprocess-pbl-2051.md — pcloan/pcfinance/pcmbshr/pcdivavg process names
+- สคริปต์ถาวร: `/root/.hermes/scripts/extract-pbl-dispatchers.py` ถูกเรียกจาก `svn-update-mcc-mhd.sh` เมื่อ changelog มี `.pbl`
 - PBProcess ที่ U: pcloan, pcfinance, pcmbshr, pcdivavg, pbprocess.exe — บันทึกใน raw เท่านั้น
 - HR ที่ U: `ws_hr_payroll_process.aspx.cs`, `ws_hr_trantofin_assist` `DsList.ascx.cs` — ยังไม่ขยายหน้าแยก (ไฟล์ใหญ่ ไฟล์หลังเป็น DataSource)
 

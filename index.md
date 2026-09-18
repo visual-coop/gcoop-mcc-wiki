@@ -2,7 +2,7 @@
 
 > Content catalog. ทุก wiki page listed พร้อม one-line summary
 > อ่านไฟล์นี้ก่อนเสมอเพื่อหา pages ที่เกี่ยวข้อง
-> Last updated: 2026-09-18 | Total pages: 15
+> Last updated: 2026-09-18 | Total pages: 16
 
 ## Entities (ระบบ/โมดูล)
 - [[gcoop-mcc]] — ระบบสหกรณ์ MCC ภาพรวม (1.7 GB, 4-layer architecture, HR/RDC/Welfare เด่น, 24 modules 436 ASPX, vs MHD)
@@ -12,6 +12,7 @@
 - [[gcoop-mcc-ws-lc-memo]] — หน้า Dynamic Memo ใหม่ (investment) SVN 2051 — LCDOCMEMO*
 - [[gcoop-mcc-ws-lc-npl-follow]] — หน้าติดตาม NPL (investment) อัปเดต SVN 2051
 - [[gcoop-mcc-svn-2051-ireports]] — iReport ชุดใหม่/แก้ใน SVN 2035→2051
+- [[gcoop-mcc-pbprocess-pbl-2051]] — dispatcher จาก binary pcloan/pcfinance/pcmbshr/pcdivavg (SVN 2051)
 
 ## Concepts
 - [[gcoop-mcc-hr-rdc-welfare]] — HR/RDC/Welfare จุดเด่นธุรกิจ MCC (81+57+33 ASPX)
