@@ -1,7 +1,7 @@
 ---
 title: "ระบบ Web MCC — ASP.NET Application"
 created: 2026-09-14
-updated: 2026-09-14
+updated: 2026-09-18
 type: entity
 tags: [aspnet, saving, loan, member, workflow, wcf, oracle, ireport, hr, rdc, walfare]
 sources: [raw/documents/mcc-session1-web-analysis.md]
@@ -47,7 +47,7 @@ confidence: high
 | **assist** | 11 | เงินช่วยเหลือสมาชิก — ขอ, อนุมัติ, จ่าย |
 | **insurance** | 9 | ประกันภัย — ขอ/อนุมัติ/ประกันสินเชื่อ |
 | **keeping** | 7 | เงินฝากประจำ — ประมวลผล, ตัดเงิน, export |
-| **investment** | 6 | การลงทุน |
+| **investment** | 7 | การลงทุน — รวม `ws_lc_memo` ใหม่ SVN 2051 ([[gcoop-mcc-ws-lc-memo]]) |
 | **fom** | 3 | Form/Workflow Management |
 | **account** | 3 | งบประมาณ — ตั้งงบ, over budget |
 

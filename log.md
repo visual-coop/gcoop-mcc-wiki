@@ -93,3 +93,21 @@
   - iReport: 117 CriteriaIReport schemas (incl. 3 MCC-specific)
   - Frame.Master: XmlConfigService + WebStateFactory + WcfCalling pattern
   - SSO: icoopthai.co domain, login at sav.icoopthai.co/CEN/GCOOP/SingleSignOn/
+
+## [2026-09-18] ingest | MCC SVN 2035→2051 (รันซ้ำหลัง cron เช้าสรุปเท็จ ไม่มี commit)
+
+- SVN: MCC 2035 → 2051 (Last Changed 2026-09-17 16:52 +0700), ไม่มี conflict
+- แหล่ง: อ่านไฟล์ใน `/root/gcoop_hermes/mcc` ตาม changelog `/root/gcoop_hermes/logs/svn-mcc-last.txt` — ไม่ svn update ซ้ำ
+- Created:
+  - raw/documents/mcc-svn-2051-2026-09-18.md
+  - entities/gcoop-mcc-ws-lc-memo.md — Dynamic Memo (`LCDOCMEMOMASTER/DETAIL/APPROVE`, `LCUCFDOCMEMO*`)
+  - entities/gcoop-mcc-ws-lc-npl-follow.md — NPL follow (`lcmembmaster`, `lccontmaster`, `lcclsmthbalance`)
+  - entities/gcoop-mcc-svn-2051-ireports.md — jrxml ใหม่/แก้ 7 ชุด
+- Updated:
+  - entities/gcoop-mcc-web-system.md — investment ASPX 6→7 (นับ `find *.aspx` ได้ 7)
+  - entities/gcoop-mcc-infrastructure.md — jrxml 676→688 (นับจริง)
+  - index.md — 15 pages
+- ไม่ ingest ไบนารี `.pbl/.pbd/.exe/.jasper`
+- PBProcess ที่ U: pcloan, pcfinance, pcmbshr, pcdivavg, pbprocess.exe — บันทึกใน raw เท่านั้น
+- HR ที่ U: `ws_hr_payroll_process.aspx.cs`, `ws_hr_trantofin_assist` `DsList.ascx.cs` — ยังไม่ขยายหน้าแยก (ไฟล์ใหญ่ ไฟล์หลังเป็น DataSource)
+

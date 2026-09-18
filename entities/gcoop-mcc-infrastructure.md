@@ -13,7 +13,7 @@ GCOOP MCC Infrastructure ประกอบด้วยเครื่องม�
 1. **Client Tools** — winUPBOOK (สมุดบัญชี), winLKE (บัตรแถบแม่เหล็ก)
 2. **Configuration System** — XMLConfig + ไฟล์ XML ทั้งหมด
 3. **Database Layer** — PLSQL, 0.DB scripts, Oracle Backup
-4. **Development Support** — CONVERT_MCC (migration), iReport (676 reports), Renci.SshNet (SSH)
+4. **Development Support** — CONVERT_MCC (migration), iReport (688 .jrxml นับจริง 2026-09-18), Renci.SshNet (SSH)
 
 ---
 
@@ -129,7 +129,7 @@ GCOOP MCC Infrastructure ประกอบด้วยเครื่องม�
 
 | สถิติ | ค่า |
 |-------|-----|
-| จำนวนทั้งหมด | **676 .jrxml files** |
+| จำนวนทั้งหมด | **688 .jrxml files** (นับจริง 2026-09-18; เดิมบันทึก 676) |
 | Format | iReport 5.0.4 (JasperReports) |
 | Location | GCOOP/iReport/Reports/ (flat) |
 | รูปภาพ | 11 ไฟล์ใน Picture/ |
