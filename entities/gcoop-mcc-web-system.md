@@ -1,4 +1,5 @@
 ---
+coop: mcc
 title: "ระบบ Web MCC — ASP.NET Application"
 created: 2026-09-14
 updated: 2026-09-18

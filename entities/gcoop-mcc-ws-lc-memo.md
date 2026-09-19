@@ -1,4 +1,5 @@
 ---
+coop: mcc
 title: ws_lc_memo — Dynamic Memo (MCC investment)
 created: 2026-09-18
 updated: 2026-09-18

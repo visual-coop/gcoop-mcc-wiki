@@ -1,4 +1,5 @@
 ---
+coop: mcc
 title: เปรียบเทียบ MCC vs MHD — สหกรณ์ GCOOP (ครบถ้วน)
 created: 2026-09-14
 updated: 2026-09-14

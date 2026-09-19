@@ -1,4 +1,5 @@
 ---
+coop: mcc
 title: HR, RDC และ Welfare — จุดเด่นธุรกิจ MCC
 created: 2026-09-14
 updated: 2026-09-14

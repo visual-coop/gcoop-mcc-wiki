@@ -1,4 +1,5 @@
 ---
+coop: mcc
 title: สถาปัตยกรรม Integration MCC — ครบถ้วน
 created: 2026-09-14
 updated: 2026-09-14

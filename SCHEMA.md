@@ -1,73 +1,38 @@
-# Wiki Schema — GCOOP Hermes
+# Schema — สหกรณ์ MCC
 
-## Domain
-ระบบสารสนเทศสหกรณ์ GCOOP (Cooperative Management System)
-ครอบคลุม: สถาปัตยกรรมระบบ, โมดูลต่างๆ, ฐานข้อมูล Oracle, API, การ deploy, และการพัฒนาระบบ
+**Schema กลางใช้ร่วมทุกสหกรณ์:** [`../_shared/SCHEMA.md`](../_shared/SCHEMA.md)
+**Taxonomy:** [`../_shared/TAXONOMY.md`](../_shared/TAXONOMY.md)
+**Naming:** [`../_shared/NAMING.md`](../_shared/NAMING.md)
+**Coverage:** [`../_shared/COVERAGE.md`](../_shared/COVERAGE.md)
 
-## โครงสร้าง Project
-- **mhd/** — ระบบหลัก GCOOP MHD (ASP.NET + Oracle + PowerBuilder)
-  - `GCOOP/Saving/` — ระบบเงินฝาก (Web)
-  - `GCOOP/PLSQL/` — Stored Procedures, Functions, Packages (Oracle)
-  - `GCOOP/PBProcess/` — PowerBuilder batch process
-- **core/** — ระบบ Core infrastructure
-  - IIS, deploy scripts, Oracle tools, Smart Card, API
+อ่าน schema กลางก่อนเสมอ — ไฟล์นี้อธิบายเฉพาะส่วนที่ต่างของสหกรณ์นี้
 
-## Conventions
-- File names: lowercase, hyphens, ไม่มี spaces (เช่น `gcoop-saving-module.md`)
-- ทุก wiki page ต้องมี YAML frontmatter
-- ใช้ `[[wikilinks]]` เชื่อมระหว่าง pages (อย่างน้อย 2 outbound links ต่อ page)
-- เมื่ออัปเดต page ให้ bump `updated` date เสมอ
-- ทุก page ใหม่ต้องเพิ่มใน `index.md`
-- ทุก action ต้องบันทึกใน `log.md`
+## ส่วนที่ต่างของ MCC
 
-## Frontmatter
 ```yaml
----
-title: Page Title
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
-type: entity | concept | comparison | query | summary
-tags: [from taxonomy below]
-sources: [raw/documents/source-name.md]
-confidence: high | medium | low
----
+coop: mcc
 ```
 
-## Tag Taxonomy
-### ระบบ/โมดูล
-- `saving` — ระบบเงินฝาก
-- `loan` — ระบบเงินกู้
-- `member` — ระบบสมาชิก
-- `atm` — ระบบ ATM
-- `dividend` — ระบบเงินปันผล
-- `insurance` — ระบบประกัน
-- `ncb` — ระบบ NCB
-- `finance` — ระบบการเงิน
+- **Vault path:** `/root/gcoop_hermes/coops/mcc`
+- **Git repo:** https://github.com/visual-coop/gcoop-mcc-wiki
+- **Source (SVN working copy):** `/root/gcoop_hermes/mcc`
+- **SVN URL:** http://svn.coopsiam.com:8080/svnGCOOPCORE/mcc
+- **Push script:** `bash /root/.hermes/scripts/mcc-wiki-autopush.sh`
 
-### เทคโนโลยี
-- `oracle` — Oracle Database
-- `aspnet` — ASP.NET Web
-- `powerbuilder` — PowerBuilder
-- `iis` — IIS Web Server
-- `wcf` — WCF Service
-- `api` — REST/SOAP API
-- `plsql` — PL/SQL
+## ลักษณะเฉพาะของระบบ MCC
 
-### ประเภท
-- `architecture` — สถาปัตยกรรมระบบ
-- `database` — ฐานข้อมูล
-- `deployment` — การ deploy
-- `workflow` — กระบวนการทำงาน
-- `bug` — ปัญหา/bug ที่พบ
-- `todo` — งานที่ต้องทำ
+- 4-layer architecture, ~1.7 GB
+- จุดเด่นธุรกิจ: HR / RDC / Welfare
+- Web: 24 โมดูล 436 ASPX, WCF 10 ตัว, Oracle x86
+- iReport: 688 jrxml (ณ 2026-09-18)
+- PowerBuilder: PBProcess 11 libs + iSavBOfc (PFC 10.5) + PBReport + Pipeline
 
-## Page Thresholds
-- **สร้าง page** เมื่อ entity/concept ปรากฏใน 2+ sources หรือสำคัญมากใน 1 source
-- **เพิ่มใน page เดิม** เมื่อ source กล่าวถึงสิ่งที่มีอยู่แล้ว
-- **แบ่ง page** เมื่อยาวเกิน 200 บรรทัด
+รายละเอียดดู `index.md` และ `entities/gcoop-mcc.md`
 
-## Update Policy
-เมื่อข้อมูลใหม่ขัดแย้งกับเดิม:
-1. ตรวจสอบวันที่ — ข้อมูลใหม่กว่ามักถูกต้องกว่า
-2. หากขัดแย้งจริง ให้บันทึกทั้งสองฝ่ายพร้อมวันที่และ source
-3. mark `contested: true` ใน frontmatter
+## ข้อควรระวังเฉพาะ MCC
+
+- **ห้ามเขียน path ของ MHD หรือ vault อื่นลงในหน้านี้** (กฎเดิมของโครงการ)
+- หน้า `comparisons/gcoop-mcc-vs-mhd.md` เป็นหน้าเปรียบเทียบข้ามสหกรณ์ —
+  ตาม `NAMING.md` ที่ถูกต้องควรอยู่ hub กลาง ยังไม่ย้าย รอตัดสินใจ
+- ยังใช้ prefix `gcoop-mcc-` ในชื่อไฟล์เดิม — **ห้าม rename ยกชุด**
+  เพราะ `[[wikilinks]]` จะพัง ดูแนวทางใน `NAMING.md`

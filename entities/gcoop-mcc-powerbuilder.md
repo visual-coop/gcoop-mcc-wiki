@@ -1,4 +1,5 @@
 ---
+coop: mcc
 title: GCOOP MCC PowerBuilder System
 created: 2026-09-14
 updated: 2026-09-14
