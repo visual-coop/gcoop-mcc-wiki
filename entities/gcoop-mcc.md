@@ -17,7 +17,7 @@ confidence: high
 | รายการ | ค่า |
 |---|---|
 | **Project Path** | `/root/gcoop_hermes/mcc/` |
-| **Wiki Location** | `/root/gcoop_hermes/gcoop-mcc-wiki/` |
+| **Wiki Location** | `/root/gcoop_hermes/coops/mcc/` |
 | **SVN** | `svn.coopsiam.com:8080/svnGCOOPCORE/mcc` |
 | **Size** | 1.7 GB total (343 MB GCOOP + 192 MB iSavBOfc) |
 | **Stack** | ASP.NET 4.0 WebForms + WCF + PowerBuilder Classic 12.5 + Oracle |
