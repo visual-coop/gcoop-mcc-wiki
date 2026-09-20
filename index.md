@@ -2,9 +2,10 @@
 
 > Content catalog. ทุก wiki page listed พร้อม one-line summary
 > อ่านไฟล์นี้ก่อนเสมอเพื่อหา pages ที่เกี่ยวข้อง
-> Last updated: 2026-09-18 | Total pages: 16
+> Last updated: 2026-09-20 | Total pages: 20
 
 ## Entities (ระบบ/โมดูล)
+- [[gcoop-mcc-loan-contadjust]] — ปรับสัญญาเงินกู้และค้ำประกัน (SVN 2085) — อนุมัติแล้วเขียน lncontcoll ใหม่ทั้งชุด
 - [[gcoop-mcc]] — ระบบสหกรณ์ MCC ภาพรวม (1.7 GB, 4-layer architecture, HR/RDC/Welfare เด่น, 24 modules 436 ASPX, vs MHD)
 - [[gcoop-mcc-web-system]] — ระบบ Web MCC 24 โมดูล 436 ASPX (ASP.NET 4.0, 10 WCF, Oracle x86, MCC-specific screens)
 - [[gcoop-mcc-powerbuilder]] — ระบบ PowerBuilder MCC: PBProcess 11 libs + iSavBOfc (PFC 10.5) + PBReport + Pipeline

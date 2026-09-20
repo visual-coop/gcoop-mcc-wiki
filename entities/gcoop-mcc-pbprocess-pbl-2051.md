@@ -1,6 +1,5 @@
 ---
 coop: mcc
-svn_rev: 2051
 title: MCC PBProcess .pbl dispatchers (SVN 2051)
 created: 2026-09-18
 updated: 2026-09-18
@@ -8,6 +7,9 @@ type: entity
 tags: [powerbuilder, loan, dividend, finance, workflow]
 sources: [raw/documents/mcc-svn-2051-2026-09-18.md]
 confidence: medium
+svn_rev_range: [2035, 2051]
+historical: true
+
 ---
 
 # MCC PBProcess — dispatcher จาก binary `.pbl` (SVN 2051)

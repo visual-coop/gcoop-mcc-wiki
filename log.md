@@ -19,3 +19,18 @@
   index.md, entities/gcoop-mcc.md, concepts/gcoop-mcc-hr-rdc-welfare.md, concepts/gcoop-mcc-integration-architecture.md
 - รับ raw ที่เป็นเนื้อหา MCC กลับจาก MHD vault: `raw/documents/critical-mcc-chat-summary-20260909.md`, `raw/documents/critical-md-gcoop-งานเร่งด่วน.md`
 - `comparisons/` ของ vault นี้ว่างแล้ว
+
+## [2026-09-20] update | ทำให้ wiki เป็นปัจจุบัน ณ rev 2085
+- registry: current_rev 2063 -> 2085, last_analyzed_rev 2085
+- เพิ่ม raw changelog: `raw/articles/mcc-svn-2085-2026-09-20.md` (22 ไฟล์, 2063->2085)
+- เพิ่ม entity ใหม่: `entities/gcoop-mcc-loan-contadjust.md` — ปรับสัญญาเงินกู้และค้ำประกัน
+  วิเคราะห์จากไฟล์จริง: `ws_lon_apvpromise` (อนุมัติแล้ว delete lncontcoll แล้ว insert ใหม่ทั้งชุด
+  จาก LNREQCONTADJUST + lnreqcontadjustcoll โดยคัด contadjust_type='NEW'),
+  `ws_lon_apvloan`, criteria `u_cri_coopid_memno_loancont_refcollno`,
+  pcmbshr.pbl (14 process), iReport 11 ไฟล์
+- **แยก "หน้าสถานะปัจจุบัน" กับ "snapshot ของช่วง rev"** ตาม SCHEMA.md ที่แก้ใหม่:
+  - snapshot: `entities/gcoop-mcc-svn-2051-ireports.md`, `entities/gcoop-mcc-pbprocess-pbl-2051.md`,
+    `raw/documents/mcc-svn-2051-2026-09-18.md`, `raw/articles/mcc-svn-2063-*.md`,
+    `raw/articles/mcc-svn-2085-*.md` -> `svn_rev_range` + `historical: true`
+  - `coverage-report.py` ตัดหน้า historical ออกจากรายงานความล้าสมัยแล้ว
+- ผล: MCC ไม่มีหน้าล้าสมัยเหลือ (เดิม 3)
