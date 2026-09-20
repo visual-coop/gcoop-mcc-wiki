@@ -34,3 +34,8 @@
     `raw/articles/mcc-svn-2085-*.md` -> `svn_rev_range` + `historical: true`
   - `coverage-report.py` ตัดหน้า historical ออกจากรายงานความล้าสมัยแล้ว
 - ผล: MCC ไม่มีหน้าล้าสมัยเหลือ (เดิม 3)
+
+## [2026-09-20] fix | verification pass (credentials / frontmatter / index count)
+- `raw/documents/mcc-session2-powerbuilder-analysis.md` — redact credential value (1 hit) → `***`
+- `entities/gcoop-mcc-infrastructure.md` — เพิ่ม frontmatter ที่หายไป (หน้าก่อนยุค schema)
+- `index.md` — แก้ Total pages จาก 20 เป็น 17 (นับจาก entry จริง)

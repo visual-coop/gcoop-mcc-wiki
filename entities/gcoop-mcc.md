@@ -4,7 +4,7 @@ title: ระบบสหกรณ์ MCC (Member Credit Cooperative)
 created: 2026-09-14
 updated: 2026-09-14
 type: entity
-tags: [architecture, aspnet, powerbuilder, oracle, member, loan, saving, hr, rdc, welfare, deployment]
+tags: [architecture, aspnet, powerbuilder, oracle, member, loan, saving, hr, rdc, walfare, deployment]
 sources: [raw/documents/mcc-session1-web-analysis.md, raw/documents/mcc-session2-powerbuilder-analysis.md, raw/documents/mcc-session3-infrastructure-analysis.md, raw/documents/mcc-session4-integration-summary.md]
 confidence: high
 ---

@@ -1,3 +1,14 @@
+---
+title: "GCOOP MCC Infrastructure — Entity Documentation"
+coop: mcc
+created: 2026-09-14
+updated: 2026-09-18
+type: entity
+tags: [iis, tools, deployment, ireport, plsql, database, aspnet]
+sources: [raw/documents/mcc-session3-infrastructure-analysis.md]
+confidence: high
+---
+
 # GCOOP MCC Infrastructure — Entity Documentation
 
 **Entity Type:** Infrastructure & Supporting Systems  

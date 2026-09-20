@@ -2,7 +2,7 @@
 
 > Content catalog. ทุก wiki page listed พร้อม one-line summary
 > อ่านไฟล์นี้ก่อนเสมอเพื่อหา pages ที่เกี่ยวข้อง
-> Last updated: 2026-09-20 | Total pages: 20
+> Last updated: 2026-09-20 | Total pages: 17
 
 ## Entities (ระบบ/โมดูล)
 - [[gcoop-mcc-loan-contadjust]] — ปรับสัญญาเงินกู้และค้ำประกัน (SVN 2085) — อนุมัติแล้วเขียน lncontcoll ใหม่ทั้งชุด

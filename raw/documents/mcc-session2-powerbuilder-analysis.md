@@ -156,7 +156,7 @@ isavbofc.pbl;ibanktrn.pbl;chack_stmbal.pbl;iimportdept.pbl;
 [Database]
 DBMS=ORA Oracle
 LogId=iscodoaeuat
-LogPassword=iscodoaeuat
+LogPassword=***
 ServerName=192.198.1.171/gcoop
 DbParm="NLS_Charset='TH8TISASCII'"
 AutoCommit=false
