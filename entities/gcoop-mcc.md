@@ -141,4 +141,4 @@ Desktop Tools: winUPBOOK (Passbook Printer/PEM.ocx) ←→ winLKE (Magnetic Card
 - [[gcoop-mcc-infrastructure]] — Infrastructure: winUPBOOK, winLKE, PLSQL, iReport, XMLConfig
 - [[gcoop-mcc-integration-architecture]] — Integration Architecture ครบถ้วน
 - [[gcoop-mcc-hr-rdc-welfare]] — จุดเด่น HR/RDC/Welfare
-- [[gcoop-mcc-vs-mhd]] — เปรียบเทียบ MCC vs MHD
+- [gcoop-mcc-vs-mhd](https://github.com/visual-coop/gcoop-kb-shared/blob/main/comparisons/gcoop-mcc-vs-mhd.md) — เปรียบเทียบ MCC vs MHD

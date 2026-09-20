@@ -257,4 +257,4 @@ charset: `TH8TISASCII` | AutoCommit: `false` ทุก connection
 - [[gcoop-mcc-powerbuilder]] — PB layer (PBProcess + iSavBOfc)
 - [[gcoop-mcc-infrastructure]] — Deployment, tools, iReport, PLSQL
 - [[gcoop-mcc-hr-rdc-welfare]] — Business domain highlights
-- [[gcoop-mcc-vs-mhd]] — เทียบ MHD
+- [gcoop-mcc-vs-mhd](https://github.com/visual-coop/gcoop-kb-shared/blob/main/comparisons/gcoop-mcc-vs-mhd.md) — เทียบ MHD

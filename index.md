@@ -19,7 +19,7 @@
 - [[gcoop-mcc-integration-architecture]] — สถาปัตยกรรม Integration ครบถ้วน (3 patterns, business flows, external systems, security, deployment)
 
 ## Comparisons
-- [[gcoop-mcc-vs-mhd]] — เปรียบเทียบ MCC vs MHD (ขนาด, business focus, tech stack เหมือนกัน 100%, MCC-specific features)
+- [gcoop-mcc-vs-mhd](https://github.com/visual-coop/gcoop-kb-shared/blob/main/comparisons/gcoop-mcc-vs-mhd.md) — เปรียบเทียบ MCC vs MHD (ขนาด, business focus, tech stack เหมือนกัน 100%, MCC-specific features)
 
 ## Raw Sources
 - [[mcc-session1-web-analysis]] — Session 1: Web Interface Analysis (436 ASPX, 24 modules, WCF+Oracle+iReport, MCC-specific, SSO)

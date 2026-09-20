@@ -71,4 +71,4 @@ MCC เป็นสหกรณ์ขนาดใหญ่ที่บริห�
 - [[gcoop-mcc]] — ภาพรวม MCC
 - [[gcoop-mcc-web-system]] — Web modules ทั้ง 23 ตัว
 - [[gcoop-mcc-integration-architecture]] — Workflow integration
-- [[gcoop-mcc-vs-mhd]] — เทียบ MHD ที่ไม่มี 3 โมดูลนี้
+- [gcoop-mcc-vs-mhd](https://github.com/visual-coop/gcoop-kb-shared/blob/main/comparisons/gcoop-mcc-vs-mhd.md) — เทียบ MHD ที่ไม่มี 3 โมดูลนี้
