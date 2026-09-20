@@ -15,7 +15,7 @@
 ## [2026-09-19] move | ย้ายหน้าเปรียบเทียบข้ามสหกรณ์ออกจาก vault
 - `comparisons/gcoop-mcc-vs-mhd.md` -> `coops/_shared/comparisons/` (repo `gcoop-kb-shared`)
   เหตุผล: หน้าเปรียบเทียบข้ามสหกรณ์ไม่ควรอยู่ใน vault ของฝ่ายใดฝ่ายหนึ่ง
-- แปลง `[[gcoop-mcc-vs-mhd]]` เป็น markdown link ไป repo กลาง ใน 4 หน้า:
+- แปลง `gcoop-mcc-vs-mhd` เป็น markdown link ไป repo กลาง ใน 4 หน้า:
   index.md, entities/gcoop-mcc.md, concepts/gcoop-mcc-hr-rdc-welfare.md, concepts/gcoop-mcc-integration-architecture.md
 - รับ raw ที่เป็นเนื้อหา MCC กลับจาก MHD vault: `raw/documents/critical-mcc-chat-summary-20260909.md`, `raw/documents/critical-md-gcoop-งานเร่งด่วน.md`
 - `comparisons/` ของ vault นี้ว่างแล้ว
