@@ -1,22 +1,62 @@
 ---
 coop: mcc
-svn_rev: 2085
-analyzed_at: 2026-09-20
-title: MCC — ปรับสัญญาเงินกู้และค้ำประกัน (SVN 2085)
+svn_rev: 2100
+analyzed_at: 2026-09-22
+title: MCC — ปรับสัญญาเงินกู้และค้ำประกัน (SVN 2100)
 created: 2026-09-20
-updated: 2026-09-20
+updated: 2026-09-22
 type: entity
-tags: [loan, member, aspnet, powerbuilder, ireport, oracle, workflow]
+tags: [loan, member, aspnet, powerbuilder, ireport, oracle, workflow, screen-analysis]
 sources: [raw/articles/mcc-svn-2085-2026-09-20.md]
 confidence: high
 ---
 
-# MCC — ปรับสัญญาเงินกู้และค้ำประกัน (SVN 2085)
+# MCC — ปรับสัญญาเงินกู้และค้ำประกัน (SVN 2100)
 
-หน้านี้บันทึกสถานะ **ณ rev 2085** (วิเคราะห์ 2026-09-20) ของชุดการเปลี่ยนแปลง
-ที่ SVN ส่งมาในช่วง 2063 → 2085 ทั้ง 22 ไฟล์กระจุกตัวอยู่ที่
-**การอนุมัติสินเชื่อ และการปรับสัญญา/ค้ำประกัน** — ดู changelog ที่
-`raw/articles/mcc-svn-2085-2026-09-20.md`
+หน้านี้บันทึกสถานะ **ณ rev 2100** (วิเคราะห์ 2026-09-22) ของชุดการเปลี่ยนแปลง
+ที่ SVN ส่งมาในช่วง 2063 → 2100 ทั้งหมดกระจุกตัวอยู่ที่
+**การอนุมัติสินเชื่อ และการปรับสัญญา/ค้ำประกัน**
+
+> rev 2063→2085 ดู `raw/articles/mcc-svn-2085-2026-09-20.md`
+
+## อัปเดตล่าสุด: rev 2085 → 2100 — งานหลักประกันต่อเนื่อง
+
+รอบนี้ `Applications/loan` เปลี่ยน 33 ไฟล์ กระจุก 3 หน้าจอ
+
+### 7.1 หน้าจอย่อยใหม่ — แก้ไขหลักประกัน (master)
+
+`ws_lon_collateral_master_ctrl/ws_lon_editcollateral_master_ctrl/` — **เพิ่มใหม่ทั้งโฟลเดอร์**
+
+ตาราง: **`lncollmaster`**, **`lnucfcollmasttype`**, **`lnucfcollmasttypegrp`**
+
+```csharp
+dsList.RetrieveList(sql_search, mode);
+```
+
+ทำงานตาม `mode` — แยกแก้ไขหลักประกันตาม **ประเภท (`collmasttype`)** และ
+**กลุ่มประเภท (`collmasttypegrp`)** ซึ่งเป็นค่าคงที่ของระบบ (`lnucf*`)
+
+หน้าหลัก `ws_lon_collateral_master_ctrl` ก็ถูกแก้พร้อมกัน 23 ไฟล์ — รวมตัวแทน
+**ที่ดิน (`DsLand.ascx`)** และ **อาคาร (`DsBding.ascx`)**
+
+### 7.2 ค้ำประกันของผู้ค้ำย่อย — ในคำขอกู้ต่อ
+
+`ws_lon_reqloanext_ctrl/DsLoanCollSubcommit.ascx` — **เพิ่มใหม่**
+
+Dataset: **`LNREQLOANCOLLSUBCOMMIT`** (ตารางใหม่)
+
+```csharp
+public void GetCOLLSUBCOMMIT(string loanrequest_donco)
+{
+    string sql = @" select * from LNREQLOANCOLLSUBCOMMIT where loanrequest_docno = {0} ";
+```
+
+เป็น `DataSourceRepeater` ที่มีปุ่มลบ (`b_del`) — เพิ่ม/ลบรายการ **ค้ำประกันย่อย**
+ผูกกับ `loanrequest_docno` ของคำขอกู้ต่อ
+
+### 7.3 ระบบเงินรอจ่ายคืน
+
+`ws_lon_proc_paymoneyreturn_ctrl` เพิ่ม `DataSet12.Designer.cs` (1 ไฟล์)
 
 ## 1. หน้าอนุมัติปรับสัญญา — `ws_lon_apvpromise`
 

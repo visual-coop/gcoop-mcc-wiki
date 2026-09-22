@@ -39,3 +39,16 @@
 - `raw/documents/mcc-session2-powerbuilder-analysis.md` — redact credential value (1 hit) → `***`
 - `entities/gcoop-mcc-infrastructure.md` — เพิ่ม frontmatter ที่หายไป (หน้าก่อนยุค schema)
 - `index.md` — แก้ Total pages จาก 20 เป็น 17 (นับจาก entry จริง)
+
+## [2026-09-22] update | rev 2100 — งานหลักประกันต่อเนื่อง
+- registry: mcc current_rev 2085 -> 2100, last_analyzed_rev 2100
+- อัปเดต `entities/gcoop-mcc-loan-contadjust.md` เป็น rev 2100 (จาก 2085)
+- 33 ไฟล์ใน `Applications/loan` เปลี่ยน กระจุก 3 หน้าจอ:
+  - **ใหม่** `ws_lon_collateral_master_ctrl/ws_lon_editcollateral_master_ctrl/`
+    หน้าจอย่อยแก้ไขหลักประกันตาม mode — ตาราง `lncollmaster`,
+    `lnucfcollmasttype`, `lnucfcollmasttypegrp` (23 ไฟล์ในหน้าหลักรวม DsLand/DsBding)
+  - **ใหม่** `ws_lon_reqloanext_ctrl/DsLoanCollSubcommit.ascx` — ค้ำประกันย่อย
+    ของคำขอกู้ต่อ ตารางใหม่ `LNREQLOANCOLLSUBCOMMIT` (DataSourceRepeater + ปุ่มลบ)
+  - `ws_lon_proc_paymoneyreturn_ctrl` เพิ่ม DataSet12 (1 ไฟล์)
+- ทำ `raw/documents/*session*-analysis.md` ของ aero/swu เป็น `historical: true`
+  (เป็น snapshot ของ session วิเคราะห์ ไม่ใช่หน้าสถานะปัจจุบัน)
