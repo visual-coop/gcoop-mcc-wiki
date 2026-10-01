@@ -52,3 +52,13 @@
   - `ws_lon_proc_paymoneyreturn_ctrl` เพิ่ม DataSet12 (1 ไฟล์)
 - ทำ `raw/documents/*session*-analysis.md` ของ aero/swu เป็น `historical: true`
   (เป็น snapshot ของ session วิเคราะห์ ไม่ใช่หน้าสถานะปัจจุบัน)
+## [2026-09-29] add | gcoop-mcc-insurance-system
+- เพิ่ม `entities/gcoop-mcc-insurance-system.md` (rev 2100) — ระบบประกันชีวิต MCC (8 จอ, ~7,500 บรรทัด)
+- โมดูลสั้นกว่า core: มีเฉพาะ ทำประกัน (reqinsure + reqinsure_aero, apvinsure), เวนคืน (88→8 + อนุมัติทันที),
+  รายละเอียด 8 tabs (statement/insreqchgplan/insreqtrnmemb/รูป/insreqinsuregain), และ batch 2 ตัว
+- **เฉพาะ MCC:** `ws_ins_proc_apply_insloan` (ติดตั้งประกันเงินกู้: เบี้ยดึงจาก lnreqloanclrother 'INS',
+  auto-approve, ประวัติ INSPROCINSUREINSTALL NEW/CHG, ส่งออกธนาคารกรุงไทย/SCBHashApp.exe)
+  และ `ws_ins_proc_close_insloan` (ปิดประกันเมื่อ lncontmaster.contract_status=-1)
+- ไม่มีจอ รับเบี้ย/จ่ายเวนคืน/สินไหม/เปลี่ยนแผน manual/ปิดเดือน — งานกลุ่มนี้อยู่โมดูลอื่น (ยังไม่ยืนยัน)
+- iReport MCC: ir_ins_001-003, ir_ins_reqinsure_mcc, ir_coopid_rdate_insurecomp_fee_mcc ฯลฯ
+- อัปเดต index.md + COVERAGE.md (hub) insurance MCC → mid

@@ -2,9 +2,10 @@
 
 > Content catalog. ทุก wiki page listed พร้อม one-line summary
 > อ่านไฟล์นี้ก่อนเสมอเพื่อหา pages ที่เกี่ยวข้อง
-> Last updated: 2026-09-20 | Total pages: 17
+> Last updated: 2026-09-29 | Total pages: 18
 
 ## Entities (ระบบ/โมดูล)
+- [[gcoop-mcc-insurance-system]] — ระบบประกันชีวิต MCC: 8 จอ (ขอทำประกัน 2 แบบ/อนุมัติ/เวนคืน 88→8/รายละเอียด 8 tabs) + batch ติดตั้ง-ปิดประกันเงินกู้ (SVN 2100)
 - [[gcoop-mcc-loan-contadjust]] — ปรับสัญญาเงินกู้และค้ำประกัน (SVN 2085) — อนุมัติแล้วเขียน lncontcoll ใหม่ทั้งชุด
 - [[gcoop-mcc]] — ระบบสหกรณ์ MCC ภาพรวม (1.7 GB, 4-layer architecture, HR/RDC/Welfare เด่น, 24 modules 436 ASPX, vs MHD)
 - [[gcoop-mcc-web-system]] — ระบบ Web MCC 24 โมดูล 436 ASPX (ASP.NET 4.0, 10 WCF, Oracle x86, MCC-specific screens)
