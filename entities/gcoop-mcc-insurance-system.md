@@ -13,7 +13,7 @@ analyzed_at: 2026-09-29
 # ระบบประกันชีวิต MCC (insurance module)
 
 ที่มา: `/root/gcoop_hermes/mcc/GCOOP/Saving/Applications/insurance/` — 8 หน้าจอ (~7,500 บรรทัด C#)
-ใช้โครงสร้างตารางตระกูล `ins*` ชุดเดียวกับ base (ดู [[gcoop-insurance-system]] ของ hub) แต่ MCC
+ใช้โครงสร้างตารางตระกูล `ins*` ชุดเดียวกับ base (ดู [gcoop-insurance-system](https://github.com/visual-coop/gcoop-kb-shared/blob/main/core/gcoop-insurance-system.md) ของ hub) แต่ MCC
 **คัดเฉพาะวงจรที่ใช้งานจริง** = ทำประกัน (เน้นประกันเงินกู้แบบ batch), เวนคืน, ดูรายละเอียด
 
 **หน้าจอที่มี:** `ws_ins_reqinsure` + `ws_ins_reqinsure_aero` (2 แบบ), `ws_ins_apvinsure`,
@@ -112,4 +112,4 @@ analyzed_at: 2026-09-29
 - ค่ารายการ lookup (ประเภท/แผน/บริษัท/อัตรา/`MBUCFGAINCONCERN`) เป็น data ใน Oracle ต่อสหกรณ์
 - rev ที่วิเคราะห์: 2100 (`registry.yaml` current_rev MCC)
 - ยังไม่ได้เจาะ: `insurance.cs`, `DataSetIns*.Designer.cs`, หน้าจอ `ws_ins_reqinsure_aero` แบบเต็ม
-- อ้างอิงข้อกำหนดโฟลเดอร์/แท็ก: [[SCHEMA]], [[TAXONOMY]] · ภาพรวมระบบ: [[gcoop-mcc]] · โมดูลอื่น: [[gcoop-mcc-web-system]]
+- อ้างอิงข้อกำหนดโฟลเดอร์/แท็ก: [[SCHEMA]], [TAXONOMY](https://github.com/visual-coop/gcoop-kb-shared/blob/main/TAXONOMY.md) · ภาพรวมระบบ: [[gcoop-mcc]] · โมดูลอื่น: [[gcoop-mcc-web-system]]
