@@ -62,3 +62,17 @@
 - ไม่มีจอ รับเบี้ย/จ่ายเวนคืน/สินไหม/เปลี่ยนแผน manual/ปิดเดือน — งานกลุ่มนี้อยู่โมดูลอื่น (ยังไม่ยืนยัน)
 - iReport MCC: ir_ins_001-003, ir_ins_reqinsure_mcc, ir_coopid_rdate_insurecomp_fee_mcc ฯลฯ
 - อัปเดต index.md + COVERAGE.md (hub) insurance MCC → mid
+
+## [2026-10-08] update | ws_lc_memo (บันทึกข้อความสหกรณ์อื่นกู้) ณ rev 2383
+- อัปเดต `entities/gcoop-mcc-ws-lc-memo.md` จาก rev 2051 -> 2383
+- เพิ่มที่พบใหม่รอบนี้:
+  - `GeneratePDF` — พิมพ์รายงานตาม `LCUCFDOCMEMOTYPE.JRXML_NAME` ของแต่ละประเภท
+    ส่งพารามิเตอร์ `as_coopid` + `as_docno` + ฟิลด์ไดนามิก (postback `PostPrintPDF`)
+  - `GenerateTestPDF` (postback `PostTestPDF`) สำหรับทดสอบ
+  - **การประเมิน DOC_STATUS ใหม่**: hasReject -> -9, !hasPending && hasApproved -> 1, else 8
+  - `AddTempPageLog` หนาแน่นทุกขั้น — ปลายทางเป็น **hidden field บนหน้าจอ**
+    (`hdTempPageLog`, cap 50000 chars) ไม่ใช่ไฟล์ log + dump Request.Form ทุก key
+    ที่มี `dyn_`/`appv_`/`memotype` (คอมเมนต์ในโค้ดว่า "HEAVY LOGS")
+  - ยืนยัน dropdown สถานะผู้อนุมัติ 3 ค่า: 8 / 1 / -9
+  - ยืนยันสีสถานะใน `DsMain.UpdateStatusColor` (เขียว/ชมพู/เหลือง/ฟ้า)
+- ยืนยันว่าหน้านี้เป็นฝั่ง `lc*` (investment = สหกรณ์อื่นกู้) ไม่ใช่ `ln*` (เงินกู้สมาชิก)

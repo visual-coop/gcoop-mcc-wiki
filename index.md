@@ -11,7 +11,7 @@
 - [[gcoop-mcc-web-system]] — ระบบ Web MCC 24 โมดูล 436 ASPX (ASP.NET 4.0, 10 WCF, Oracle x86, MCC-specific screens)
 - [[gcoop-mcc-powerbuilder]] — ระบบ PowerBuilder MCC: PBProcess 11 libs + iSavBOfc (PFC 10.5) + PBReport + Pipeline
 - [[gcoop-mcc-infrastructure]] — Infrastructure MCC (winUPBOOK/winLKE ClickOnce, PLSQL 39 files, iReport 688 jrxml ณ 2026-09-18, XMLConfig)
-- [[gcoop-mcc-ws-lc-memo]] — หน้า Dynamic Memo ใหม่ (investment) SVN 2051 — LCDOCMEMO*
+- [[gcoop-mcc-ws-lc-memo]] — หน้าบันทึกข้อความสหกรณ์อื่นกู้ (investment, rev 2383): ฟิลด์ไดนามิกตามประเภทเอกสาร, สายอนุมัติ 3 คน, ประเมิน DOC_STATUS, พิมพ์ PDF ตาม JRXML_NAME, log ลง hidden field
 - [[gcoop-mcc-ws-lc-npl-follow]] — หน้าติดตาม NPL (investment) อัปเดต SVN 2051
 - [[gcoop-mcc-svn-2051-ireports]] — iReport ชุดใหม่/แก้ใน SVN 2035→2051
 - [[gcoop-mcc-pbprocess-pbl-2051]] — dispatcher จาก binary pcloan/pcfinance/pcmbshr/pcdivavg (SVN 2051)
