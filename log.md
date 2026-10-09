@@ -76,3 +76,27 @@
   - ยืนยัน dropdown สถานะผู้อนุมัติ 3 ค่า: 8 / 1 / -9
   - ยืนยันสีสถานะใน `DsMain.UpdateStatusColor` (เขียว/ชมพู/เหลือง/ฟ้า)
 - ยืนยันว่าหน้านี้เป็นฝั่ง `lc*` (investment = สหกรณ์อื่นกู้) ไม่ใช่ `ln*` (เงินกู้สมาชิก)
+
+## [2026-10-08] audit | ตรวจสถานะ SVN working copy ณ rev 2383
+- **Working copy:** `/root/gcoop_hermes/mcc` | Revision **2383** | Last Changed 2026-10-08 15:17:48 +07
+- **svn log ล่าสุด (network):**
+  - r2383 `Prazit:investment:AuditReport:initial`
+  - r2382 `Prazit:investment:Audit for LC`
+  - r2381 `Prazit:investment:AuditHelper`
+  - r2380 `Prazit:investment:รายละเอียดสัญญา:เอกสารประกอบ`
+  - r2379 `aod : เพิ่มรายงานจ่ายเงินส่งเกินคืนประจำวัน`
+  - r2378 `Prazit:investment:MemoAdded:บันทึกข้อความขอรายงานผลการรับชำระหนี้เงินให้กู้ (ฟอร์มใหม่)`
+- **สถานะ working copy:** Modified 2, Conflicted 3 (Text conflicts 3) — ยังไม่ commit
+  - `M GCOOP/Saving/Applications/loan/ws_lon_apvloan_ctrl/ws_lon_apvloan.aspx.cs`
+  - `M GCOOP/Saving/CriteriaIReport/..._mcc_resign_seqno.aspx.designer.cs`
+  - `C GCOOP/Saving/Extend_Saving.csproj` (conflict ครอบบรรทัด 29–35539)
+  - `C GCOOP/iReport/Reports/ir_loan_book_chg_collno_mcc_new_resign.jrxml`
+  - `C GCOOP/iReport/Reports/ir_loan_book_chg_collno_mcc_new_resign_no2.jrxml`
+- **แก้แล้ว:** `..._mcc_resign_seqno.aspx.cs` ถูกทับด้วยเนื้อหา `.designer.cs` (md5 ตรงกันทั้งไฟล์)
+  ทำให้ partial class ซ้ำ → build พัง; ทำ `svn revert` คืนไฟล์จริง (128 บรรทัด) แล้ว
+  backup ไว้ที่ `cache/scratch/mcc-fix-20261008/`
+- **พบปัญหาโครงสร้าง:** มี `index.md`, `log.md`, `raw/` หลงอยู่ใน SVN checkout root
+  (`/root/gcoop_hermes/mcc/`) ซึ่ง **ไม่ใช่ vault จริง** (vault = `coops/mcc`) และไม่ถูก version
+  → ทำให้การอ่าน "log.md ล่าสุดของ mcc" ได้ข้อมูลผิด
+- **bug fix ค้างใน working copy:** `ws_lon_apvloan.aspx.cs` แก้ลำดับพารามิเตอร์ `WebUtil.SQLFormat`
+  ของ `sqlfix` (เดิมสลับ {0}/{1}; ของใหม่ถูกต้อง) + จัด indent SQL
